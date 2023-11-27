@@ -107,6 +107,66 @@
       height: 1px;
       margin: 1em 0;
     }
+    .card {
+    width: 100%;
+    background: #fff480;
+    color: black;
+    position: relative;
+    border-radius: 2.5em;
+    padding: 2em;
+    transition: transform 0.4s ease;
+    }
+    .card .card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5em;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+/* === removing default button style ===*/
+.button {
+  margin: 0;
+  height: auto;
+  background: transparent;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+/* button styling */
+.button {
+  --border-right: 6px;
+  --text-stroke-color: rgba(0, 0, 0, 0.6);
+  --animation-color: #37FF8B;
+  --fs-size: 2em;
+  letter-spacing: 3px;
+  text-decoration: none;
+  font-size: var(--fs-size);
+  font-family: "Arial";
+  position: relative;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--text-stroke-color);
+}
+/* this is the text, when you hover on button */
+.hover-text {
+  position: absolute;
+  box-sizing: border-box;
+  content: attr(data-text);
+  color: var(--animation-color);
+  width: 0%;
+  inset: 0;
+  border-right: var(--border-right) solid var(--animation-color);
+  overflow: hidden;
+  transition: 0.5s;
+  -webkit-text-stroke: 1px var(--animation-color);
+}
+/* hover */
+.button:hover .hover-text {
+  width: 100%;
+  filter: drop-shadow(0 0 23px var(--animation-color))
+}
     table {
       margin: 1em 0;
       border-collapse: collapse;
@@ -227,12 +287,10 @@
   <![endif]-->
 </head>
 <body>
-<div id="7e2741b1" class="cell markdown">
+<div id="7e2741b1" class="card">
 <h1
-id="proyecto-ciencia-de-datos-como-se-relacionan-las-tasas-de-suicidios-con-algunos-de-los-principales-indices-estadisticos-que-describen-la-situacion-socio-economica-de-un-pais-continente-region">PROYECTO
-CIENCIA DE DATOS: ¿COMO SE RELACIONAN LAS TASAS DE SUICIDIOS CON ALGUNOS
-DE LOS PRINCIPALES INDICES ESTADISTICOS QUE DESCRIBEN LA SITUACION
-SOCIO-ECONOMICA DE UN PAIS-CONTINENTE-REGION?</h1>
+id="proyecto ciencia de datos" class="card-content">
+¿Tienen Relacion la tasa de Suicidios con los principales indices socioeconomicos?</h1>
 </div>
 <section id="contexto-y-motivacion" class="cell markdown">
 <h3>CONTEXTO Y MOTIVACION</h3>
@@ -251,8 +309,12 @@ política o medios de comunicación, que puedan usar nuestros resultados
 para diseñar e implementar estrategias de prevención, intervención y
 sensibilización sobre el suicidio.</p>
 </section>
-<div id="7128af86" class="cell markdown">
-<h3 id="preguntas">PREGUNTAS</h3>
+<div id="7128af86" class="cell markdown card">
+  <div class="card-content">
+    <button class="button" data-text="Awesome">
+      <span class="actual-text">&nbsp;Preguntas&nbsp;</span>
+      <span aria-hidden="true" class="hover-text">&nbsp;Preguntas&nbsp;</span>
+    </button>
 <ul>
 <li>¿Existe una correlación significativa entre la tasa de suicidios y
 el promedio de ingresos a nivel nacional en diferentes países? Si es
@@ -269,6 +331,7 @@ diferentes grupos demográficos?</li>
 <li>¿Se relaciona la tasa de suicidios con la esperanza de vida de los
 países?</li>
 </ul>
+</div>
 </div>
 <section id="datos-usados" class="cell markdown">
 <h3>DATOS USADOS</h3>
@@ -349,36 +412,6 @@ explicar las variaciones en las tasas de suicidio entre países. Otros
 factores no capturados por la esperanza de vida influyen de manera
 significativa en estas tasas.</p>
 </section>
-<section id="que-podría-salir-mal" class="cell markdown">
-<h3>¿QUE PODRÍA SALIR MAL?</h3>
-<p>En el proyecto de ciencia de datos que llevaremos a cabo, nos
-enfrentamos a posibles desafíos que podrían impactar la validez de
-nuestras conclusiones. La disparidad en la calidad y disponibilidad de
-datos entre países plantea un riesgo de sesgo y limitaciones en las
-comparaciones que haremos. La complejidad de las relaciones causales
-sociodemográficas y la posible omisión de variables cruciales podrían
-conducir a interpretaciones erróneas en nuestro análisis. También
-debemos ser conscientes de la importancia de considerar factores
-culturales y contextuales para evitar distorsiones en nuestras
-conclusiones. Además, la interpretación simplista de tendencias y la
-falta de atención a variables de confusión podrían comprometer la
-precisión de nuestros resultados y, en última instancia, la efectividad
-de las políticas resultantes que propondremos. En resumen, en este
-proyecto de ciencia de datos, es crucial identificar y abordar estos
-desafíos para asegurar la robustez y aplicabilidad de nuestros
-hallazgos</p>
-</section>
-<div class="cell markdown">
-<ul>
-<li>Ignorar que la Correlacion no implica causalidad</li>
-<li>Haber elegido visualizaciones y graficos incorrectos, que no aportan
-informacion importante</li>
-<li>No considerar el bias(sesgo) de los datos. "Tus resultados son tan
-buenos como tus datos". Desafortunadamente, a menudo no tenemos
-exactitud sobre como o donde se recopilan los datos. Es por tal que,
-debemos considerar si hay un bias presente o no.</li>
-</ul>
-</div>
 <div id="d14c0b0d" class="cell markdown">
 <h2
 id="1-existe-una-correlación-significativa-entre-la-tasa-de-suicidios-y-el-promedio-de-ingresos-a-nivel-nacional-en-diferentes-países-si-es-que-existe-cómo-ha-evolucionado-a-lo-largo-de-la-última-década">1. 
