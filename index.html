@@ -255,7 +255,7 @@ sensibilización sobre el suicidio.</p>
 <h3 id="preguntas">PREGUNTAS</h3>
 <ul>
 <li>¿Existe una correlación significativa entre la tasa de suicidios y
-el promedio de ingresos a nivel nacional en diferentes países?, si es
+el promedio de ingresos a nivel nacional en diferentes países? Si es
 que existe ¿Cómo ha evolucionado a lo largo de la última década?</li>
 <li>¿Cómo han evolucionado las tasas de suicidios en diferentes países a
 lo largo de la última década? (Países con mayor aumento y países con
@@ -379,146 +379,14 @@ exactitud sobre como o donde se recopilan los datos. Es por tal que,
 debemos considerar si hay un bias presente o no.</li>
 </ul>
 </div>
-<div id="f2eaeb80" class="cell code" data-execution_count="1">
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests <span class="im">as</span> rq</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup <span class="im">as</span> bs</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span></code></pre></div>
-</div>
-<div class="cell markdown">
-<p>IMPORTAMOS LAS LIBRERIAS QUE USAREMOS</p>
-</div>
 <div id="d14c0b0d" class="cell markdown">
-<p>## 1. ¿Existe una correlación significativa entre la tasa de
+<h2
+id="1-existe-una-correlación-significativa-entre-la-tasa-de-suicidios-y-el-promedio-de-ingresos-a-nivel-nacional-en-diferentes-países-si-es-que-existe-cómo-ha-evolucionado-a-lo-largo-de-la-última-década">1. 
+¿Existe una correlación significativa entre la tasa de
 suicidios y el promedio de ingresos a nivel nacional en diferentes
-países?, si es que existe ¿Cómo ha evolucionado a lo largo de la última
-década?</p>
+países? Si es que existe ¿Cómo ha evolucionado a lo largo de la última
+década?</h2>
 </div>
-<div class="cell code" data-execution_count="2">
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#https://www.datosmundial.com/ingreso-promedio.php</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>ingresos_mundo<span class="op">=</span> pd.read_csv(<span class="st">&#39;Datos/income.csv&#39;</span>, sep<span class="op">=</span><span class="st">&#39;,&#39;</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>ingresos_mundo.rename(columns<span class="op">=</span>{<span class="st">&#39;LOCATION&#39;</span>:<span class="st">&#39;CodigoPais&#39;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>ingresos_mundo2019 <span class="op">=</span> ingresos_mundo[ingresos_mundo[<span class="st">&quot;TIME&quot;</span>]<span class="op">==</span><span class="dv">2019</span>]</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>df_suicidio_oms<span class="op">=</span> pd.read_excel(<span class="st">&#39;Datos/data.xlsx&#39;</span>,skiprows<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">&#39;display.max_columns&#39;</span>, <span class="va">None</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>df_suicidio_oms.dropna(thresh<span class="op">=</span><span class="fl">0.2</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>df_suicidio_oms_clean<span class="op">=</span>df_suicidio_oms[[<span class="st">&#39;ParentLocation&#39;</span>,<span class="st">&#39;SpatialDimValueCode&#39;</span>,<span class="st">&#39;Location&#39;</span>,<span class="st">&#39;Period&#39;</span>,<span class="st">&#39;Dim1&#39;</span>,<span class="st">&#39;FactValueNumeric&#39;</span>]].copy()</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>df_suicidio_oms_clean.rename(columns<span class="op">=</span>{<span class="st">&#39;SpatialDimValueCode&#39;</span>:<span class="st">&#39;CodigoPais&#39;</span>}, inplace<span class="op">=</span><span class="va">True</span>) </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>suicidios2009 <span class="op">=</span> df_suicidio_oms_clean[df_suicidio_oms_clean[<span class="st">&#39;Period&#39;</span>] <span class="op">==</span> <span class="dv">2009</span>]</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>suicidios2009 <span class="op">=</span> suicidios2009[suicidios2009[<span class="st">&#39;Dim1&#39;</span>] <span class="op">==</span> <span class="st">&quot;Both sexes&quot;</span>]</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#haremos un merge de los datos de suicidios con los datos de ingresos</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>suicidios2019 <span class="op">=</span> df_suicidio_oms_clean[df_suicidio_oms_clean[<span class="st">&#39;Period&#39;</span>] <span class="op">==</span> <span class="dv">2019</span>]</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>suicidios2019 <span class="op">=</span> suicidios2019[suicidios2019[<span class="st">&#39;Dim1&#39;</span>] <span class="op">==</span> <span class="st">&quot;Both sexes&quot;</span>]</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>suicidios_ingresos2019 <span class="op">=</span> suicidios2019.merge(ingresos_mundo2019, on<span class="op">=</span><span class="st">&quot;CodigoPais&quot;</span>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>suicidios_ingresos2019.rename(columns<span class="op">=</span>{<span class="st">&#39;Value&#39;</span>:<span class="st">&#39;IngresoPromedio&#39;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="3">
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#agregaremos una columna que diga correlacion entre los datos de suicidios y los ingresos</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>suicidios_ingresos2019[<span class="st">&#39;Correlacion&#39;</span>] <span class="op">=</span> suicidios_ingresos2019[<span class="st">&#39;FactValueNumeric&#39;</span>] <span class="op">/</span> suicidios_ingresos2019[<span class="st">&#39;IngresoPromedio&#39;</span>]</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#quitaremos las variables que no necesitamos</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>suicidios_ingresos2019.drop([<span class="st">&#39;TIME&#39;</span>,<span class="st">&#39;Flag Codes&#39;</span>,<span class="st">&#39;INDICATOR&#39;</span>, <span class="st">&#39;SUBJECT&#39;</span>, <span class="st">&#39;ParentLocation&#39;</span>,<span class="st">&#39;FREQUENCY&#39;</span>,<span class="st">&#39;MEASURE&#39;</span>,<span class="st">&#39;Dim1&#39;</span>, <span class="st">&#39;Period&#39;</span>, <span class="st">&#39;Location&#39;</span>], axis<span class="op">=</span><span class="dv">1</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>suicidios_ingresos2019.rename(columns<span class="op">=</span>{<span class="st">&#39;FactValueNumeric&#39;</span>:<span class="st">&#39;Suicidios_por_100&#39;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#ordenamos por ingreso promedio</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>suicidios_ingresos2019.sort_values(by<span class="op">=</span>[<span class="st">&#39;IngresoPromedio&#39;</span>], inplace<span class="op">=</span><span class="va">True</span>, ascending<span class="op">=</span><span class="va">False</span>)</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="4">
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>url_wage <span class="op">=</span> <span class="st">&quot;https://en.wikipedia.org/wiki/List_of_countries_by_average_wage&quot;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>page_wage <span class="op">=</span> rq.get(url_wage).text</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>soup_wage <span class="op">=</span> bs(page_wage, <span class="st">&#39;html.parser&#39;</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>tables_wage <span class="op">=</span> soup_wage.find_all(<span class="st">&#39;table&#39;</span>, {<span class="st">&#39;class&#39;</span>: <span class="st">&#39;wikitable&#39;</span>})</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>table_wage <span class="op">=</span> tables_wage[<span class="dv">0</span>]</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>columns_wage <span class="op">=</span> [<span class="st">&quot;Country&quot;</span>, <span class="st">&quot;2000&quot;</span>, <span class="st">&quot;2010&quot;</span>, <span class="st">&quot;2020&quot;</span>, <span class="st">&quot;2022&quot;</span>]</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>df_wage <span class="op">=</span> pd.DataFrame(columns<span class="op">=</span>columns_wage)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> row <span class="kw">in</span> table_wage.find_all(<span class="st">&quot;tr&quot;</span>)[<span class="dv">1</span>:]: </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> row.find_all([<span class="st">&quot;th&quot;</span>, <span class="st">&quot;td&quot;</span>])</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> col:</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        country <span class="op">=</span> <span class="bu">str</span>(col[<span class="dv">0</span>].text.strip().replace(<span class="st">&#39;*&#39;</span>, <span class="st">&#39;&#39;</span>))</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        avg_wage_2000 <span class="op">=</span> col[<span class="dv">1</span>].text.strip()</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        avg_wage_2010 <span class="op">=</span> <span class="bu">int</span>(col[<span class="dv">2</span>].text.strip().replace(<span class="st">&#39;,&#39;</span>, <span class="st">&#39;&#39;</span>))</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        avg_wage_2020 <span class="op">=</span> col[<span class="dv">3</span>].text.strip()</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        avg_wage_2022 <span class="op">=</span> col[<span class="dv">4</span>].text.strip()  </span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        new_row <span class="op">=</span> pd.Series(data<span class="op">=</span>{<span class="st">&quot;Country&quot;</span>: country, <span class="st">&quot;2000&quot;</span>: avg_wage_2000,</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;2010&quot;</span>: avg_wage_2010, <span class="st">&quot;2020&quot;</span>: avg_wage_2020, <span class="st">&quot;2022&quot;</span>: avg_wage_2022})</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        df_wage <span class="op">=</span> pd.concat([df_wage, new_row.to_frame().T])</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>df_wage.columns <span class="op">=</span> df_wage.columns.<span class="bu">str</span>.replace(<span class="st">&#39;*&#39;</span>, <span class="st">&#39;&#39;</span>)</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>df_wage.reset_index(drop<span class="op">=</span><span class="va">True</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#nos quedamos solo con los datos de 2010</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>df_wage <span class="op">=</span> df_wage[[<span class="st">&#39;Country&#39;</span>, <span class="st">&#39;2010&#39;</span>]].copy()</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>df_wage.rename(columns<span class="op">=</span>{<span class="st">&#39;2010&#39;</span>:<span class="st">&#39;IngresoPromedio&#39;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>df_wage <span class="op">=</span> df_wage.sort_values(by<span class="op">=</span><span class="st">&quot;Country&quot;</span>, ascending<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>df_wage.reset_index(drop<span class="op">=</span><span class="va">True</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>df_wage[<span class="st">&quot;Country&quot;</span>] <span class="op">=</span> df_wage[<span class="st">&quot;Country&quot;</span>].astype(<span class="bu">str</span>)</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="5">
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>url_suicide <span class="op">=</span> <span class="st">&quot;https://en.wikipedia.org/wiki/List_of_countries_by_suicide_rate&quot;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>page_suicide <span class="op">=</span> rq.get(url_suicide).text</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>soup_suicide <span class="op">=</span> bs(page_suicide, <span class="st">&#39;html.parser&#39;</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>tables_suicide <span class="op">=</span> soup_suicide.find_all(<span class="st">&#39;table&#39;</span>, {<span class="st">&#39;class&#39;</span>: <span class="st">&#39;wikitable&#39;</span>})</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>table_suicide <span class="op">=</span> tables_suicide[<span class="dv">1</span>]</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>columns_suicide <span class="op">=</span> [<span class="st">&quot;Country&quot;</span>, <span class="st">&quot;2010&quot;</span>]</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>df_suicide <span class="op">=</span> pd.DataFrame(columns<span class="op">=</span>columns_suicide)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> row <span class="kw">in</span> table_suicide.find_all(<span class="st">&quot;tr&quot;</span>)[<span class="dv">2</span>:]:  </span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> row.find_all([<span class="st">&quot;th&quot;</span>, <span class="st">&quot;td&quot;</span>])</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> col:</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        country <span class="op">=</span> <span class="bu">str</span>(col[<span class="dv">0</span>].text.strip().replace(<span class="st">&#39; *&#39;</span>, <span class="st">&#39;&#39;</span>)) </span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        suicide_rate_2010 <span class="op">=</span> <span class="bu">float</span>(col[<span class="dv">10</span>].text.strip())</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        new_row <span class="op">=</span> pd.Series(data<span class="op">=</span>{<span class="st">&quot;Country&quot;</span>: country, <span class="st">&quot;2010&quot;</span>: suicide_rate_2010})</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        df_suicide <span class="op">=</span> pd.concat([df_suicide, new_row.to_frame().T])</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>df_suicide.reset_index(drop<span class="op">=</span><span class="va">True</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>df_suicide.rename(columns<span class="op">=</span>{<span class="st">&#39;2010&#39;</span>:<span class="st">&#39;Suicidios_x_100k&#39;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="6">
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df_wage[<span class="st">&quot;Country&quot;</span>] <span class="op">=</span> df_wage[<span class="st">&quot;Country&quot;</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: re.sub(<span class="vs">r&#39;\W+&#39;</span>, <span class="st">&#39;&#39;</span>, <span class="bu">str</span>(x).lower()))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df_suicide[<span class="st">&quot;Country&quot;</span>] <span class="op">=</span> df_suicide[<span class="st">&quot;Country&quot;</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: re.sub(<span class="vs">r&#39;\W+&#39;</span>, <span class="st">&#39;&#39;</span>, <span class="bu">str</span>(x).lower()))</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df_merged <span class="op">=</span> pd.merge(df_wage, df_suicide, on<span class="op">=</span><span class="st">&quot;Country&quot;</span>, how<span class="op">=</span><span class="st">&quot;inner&quot;</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>df_merged_sorted <span class="op">=</span> df_merged.sort_values(by<span class="op">=</span><span class="st">&quot;Country&quot;</span>, ascending<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>df_merged_sorted.reset_index(drop<span class="op">=</span><span class="va">True</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>df_merged_sorted[<span class="st">&#39;Correlacion&#39;</span>] <span class="op">=</span> df_merged_sorted[<span class="st">&#39;Suicidios_x_100k&#39;</span>] <span class="op">/</span> df_merged_sorted[<span class="st">&#39;IngresoPromedio&#39;</span>]</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>df_merged_sorted[<span class="st">&#39;IngresoPromedio&#39;</span>] <span class="op">=</span> pd.to_numeric(df_merged_sorted[<span class="st">&#39;IngresoPromedio&#39;</span>], errors<span class="op">=</span><span class="st">&#39;coerce&#39;</span>).fillna(<span class="dv">0</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>df_merged_sorted[<span class="st">&#39;Suicidios_x_100k&#39;</span>] <span class="op">=</span> pd.to_numeric(df_merged_sorted[<span class="st">&#39;Suicidios_x_100k&#39;</span>], errors<span class="op">=</span><span class="st">&#39;coerce&#39;</span>).fillna(<span class="dv">0</span>)</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="7">
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">10</span>))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>df_merged_sorted, x<span class="op">=</span><span class="st">&quot;IngresoPromedio&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicidios_x_100k&quot;</span>, ax<span class="op">=</span>axs[<span class="dv">0</span>, <span class="dv">0</span>], color<span class="op">=</span><span class="st">&#39;blue&#39;</span>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>, <span class="dv">0</span>].set_title(<span class="st">&quot;Correlacion 2010&quot;</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>, <span class="dv">0</span>].set_xlabel(<span class="st">&quot;Ingreso promedio&quot;</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>, <span class="dv">0</span>].set_ylabel(<span class="st">&quot;Suicidios por 100.000 habitantes&quot;</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>suicidios_ingresos2019, x<span class="op">=</span><span class="st">&quot;IngresoPromedio&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicidios_por_100&quot;</span>, ax<span class="op">=</span>axs[<span class="dv">0</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;green&#39;</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>, <span class="dv">1</span>].set_title(<span class="st">&quot;Correlacion 2019&quot;</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>, <span class="dv">1</span>].set_xlabel(<span class="st">&quot;Ingreso promedio&quot;</span>)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>, <span class="dv">1</span>].set_ylabel(<span class="st">&quot;Suicidios por 100.000 habitantes&quot;</span>)</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>sns.regplot(data<span class="op">=</span>df_merged_sorted, x<span class="op">=</span><span class="st">&quot;IngresoPromedio&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicidios_x_100k&quot;</span>, ax<span class="op">=</span>axs[<span class="dv">1</span>, <span class="dv">0</span>], scatter_kws<span class="op">=</span>{<span class="st">&quot;color&quot;</span>: <span class="st">&quot;red&quot;</span>}, line_kws<span class="op">=</span>{<span class="st">&quot;color&quot;</span>: <span class="st">&quot;orange&quot;</span>})</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>, <span class="dv">0</span>].set_title(<span class="st">&quot;Correlacion 2010&quot;</span>)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>, <span class="dv">0</span>].set_xlabel(<span class="st">&quot;Ingreso promedio&quot;</span>)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>, <span class="dv">0</span>].set_ylabel(<span class="st">&quot;Suicidios por 100.000 habitantes&quot;</span>)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>sns.regplot(data<span class="op">=</span>suicidios_ingresos2019, x<span class="op">=</span><span class="st">&quot;IngresoPromedio&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicidios_por_100&quot;</span>, ax<span class="op">=</span>axs[<span class="dv">1</span>, <span class="dv">1</span>], scatter_kws<span class="op">=</span>{<span class="st">&quot;color&quot;</span>: <span class="st">&quot;purple&quot;</span>}, line_kws<span class="op">=</span>{<span class="st">&quot;color&quot;</span>: <span class="st">&quot;pink&quot;</span>})</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>, <span class="dv">1</span>].set_title(<span class="st">&quot;Correlacion 2019&quot;</span>)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>, <span class="dv">1</span>].set_xlabel(<span class="st">&quot;Ingreso promedio&quot;</span>)</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>, <span class="dv">1</span>].set_ylabel(<span class="st">&quot;Suicidios por 100.000 habitantes&quot;</span>)</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/ae7bfff521c8793447918515d2080cfdbd10e742.png" /></p>
@@ -541,198 +409,13 @@ de suicidio.</p>
 </div>
 <div id="9e8a9b52" class="cell markdown">
 <h2
-id="2-cómo-han-evolucionado-las-tasas-de-suicidios-en-diferentes-países-a-lo-largo-de-la-última-década-países-con-mayor-aumento-y-países-con-menor-aumento-josías">2.
+id="2-cómo-han-evolucionado-las-tasas-de-suicidios-en-diferentes-países-a-lo-largo-de-la-última-década-países-con-mayor-aumento-y-países-con-menor-aumento">2.
 ¿Cómo han evolucionado las tasas de suicidios en diferentes países a lo
 largo de la última década? (Países con mayor aumento y países con menor
-aumento) (Josías)</h2>
-</div>
-<div class="cell code" data-execution_count="8">
-<div class="sourceCode" id="cb8"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nuevo_suicidios2009 <span class="op">=</span> suicidios2009.rename(columns <span class="op">=</span> {<span class="st">&quot;FactValueNumeric&quot;</span> : <span class="st">&quot;FVN09&quot;</span>}) </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>nuevo_suicidios2009 <span class="op">=</span> nuevo_suicidios2009.drop(<span class="st">&quot;Period&quot;</span>, axis <span class="op">=</span> <span class="dv">1</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>nuevo_suicidios2019 <span class="op">=</span> suicidios2019.rename(columns <span class="op">=</span> {<span class="st">&quot;FactValueNumeric&quot;</span> : <span class="st">&quot;FVN19&quot;</span>})</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>nuevo_suicidios2019 <span class="op">=</span> nuevo_suicidios2019.drop(<span class="st">&quot;Period&quot;</span>, axis <span class="op">=</span> <span class="dv">1</span>)</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="9">
-<div class="sourceCode" id="cb9"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df_merged <span class="op">=</span> pd.merge(nuevo_suicidios2009, nuevo_suicidios2019, on <span class="op">=</span> <span class="st">&quot;CodigoPais&quot;</span> )</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>columnas_para_eliminar <span class="op">=</span> [<span class="st">&#39;ParentLocation_y&#39;</span>, <span class="st">&#39;Location_y&#39;</span>, <span class="st">&#39;Dim1_y&#39;</span>]</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df_merged <span class="op">=</span> df_merged.drop(columnas_para_eliminar, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>df_merged <span class="op">=</span> df_merged.rename(columns <span class="op">=</span> {<span class="st">&quot;ParentLocation_x&quot;</span> : <span class="st">&quot;ParentLocation&quot;</span>, <span class="st">&quot;Location_x&quot;</span> : <span class="st">&quot;Location&quot;</span>, <span class="st">&quot;Dim1_x&quot;</span> : <span class="st">&quot;Dim1&quot;</span>})</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>aumento_suicidios <span class="op">=</span> df_merged[<span class="st">&quot;FVN19&quot;</span>] <span class="op">-</span> df_merged[<span class="st">&quot;FVN09&quot;</span>]</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>df_merged[<span class="st">&quot;Aumento_Tasa&quot;</span>] <span class="op">=</span> aumento_suicidios</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>df_merged</span></code></pre></div>
-<div class="output execute_result" data-execution_count="9">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ParentLocation</th>
-      <th>CodigoPais</th>
-      <th>Location</th>
-      <th>Dim1</th>
-      <th>FVN09</th>
-      <th>FVN19</th>
-      <th>Aumento_Tasa</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Africa</td>
-      <td>AGO</td>
-      <td>Angola</td>
-      <td>Both sexes</td>
-      <td>6.69</td>
-      <td>6.08</td>
-      <td>-0.61</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Africa</td>
-      <td>BDI</td>
-      <td>Burundi</td>
-      <td>Both sexes</td>
-      <td>7.73</td>
-      <td>6.24</td>
-      <td>-1.49</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Africa</td>
-      <td>BEN</td>
-      <td>Benin</td>
-      <td>Both sexes</td>
-      <td>8.46</td>
-      <td>7.81</td>
-      <td>-0.65</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Africa</td>
-      <td>BFA</td>
-      <td>Burkina Faso</td>
-      <td>Both sexes</td>
-      <td>7.97</td>
-      <td>7.48</td>
-      <td>-0.49</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Africa</td>
-      <td>BWA</td>
-      <td>Botswana</td>
-      <td>Both sexes</td>
-      <td>25.12</td>
-      <td>16.05</td>
-      <td>-9.07</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>178</th>
-      <td>Western Pacific</td>
-      <td>SLB</td>
-      <td>Solomon Islands</td>
-      <td>Both sexes</td>
-      <td>15.79</td>
-      <td>14.67</td>
-      <td>-1.12</td>
-    </tr>
-    <tr>
-      <th>179</th>
-      <td>Western Pacific</td>
-      <td>TON</td>
-      <td>Tonga</td>
-      <td>Both sexes</td>
-      <td>4.28</td>
-      <td>3.82</td>
-      <td>-0.46</td>
-    </tr>
-    <tr>
-      <th>180</th>
-      <td>Western Pacific</td>
-      <td>VNM</td>
-      <td>Viet Nam</td>
-      <td>Both sexes</td>
-      <td>6.94</td>
-      <td>7.51</td>
-      <td>0.57</td>
-    </tr>
-    <tr>
-      <th>181</th>
-      <td>Western Pacific</td>
-      <td>VUT</td>
-      <td>Vanuatu</td>
-      <td>Both sexes</td>
-      <td>19.75</td>
-      <td>18.03</td>
-      <td>-1.72</td>
-    </tr>
-    <tr>
-      <th>182</th>
-      <td>Western Pacific</td>
-      <td>WSM</td>
-      <td>Samoa</td>
-      <td>Both sexes</td>
-      <td>11.00</td>
-      <td>12.55</td>
-      <td>1.55</td>
-    </tr>
-  </tbody>
-</table>
-<p>183 rows × 7 columns</p>
+aumento)</h2>
 </div>
 </div>
 </div>
-<div class="cell code" data-execution_count="10">
-<div class="sourceCode" id="cb10"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(df_merged[df_merged[<span class="st">&quot;Aumento_Tasa&quot;</span>] <span class="op">&lt;</span> <span class="dv">0</span>]))</span></code></pre></div>
-<div class="output stream stdout">
-<pre><code>130
-</code></pre>
-</div>
-</div>
-<div class="cell code" data-execution_count="11">
-<div class="sourceCode" id="cb12"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(df_merged[df_merged[<span class="st">&quot;Aumento_Tasa&quot;</span>] <span class="op">&gt;=</span> <span class="dv">0</span>]))</span></code></pre></div>
-<div class="output stream stdout">
-<pre><code>53
-</code></pre>
-</div>
-</div>
-<div class="cell markdown">
-<p>Según nuestros datos, tenemos que la tasa de suicidios en una decada
-(2009 - 2019) aumentó en 53 países (28,96%), mientras que en 130
-disminuyó (71,04%)</p>
-</div>
-<div class="cell code" data-execution_count="12">
-<div class="sourceCode" id="cb14"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df_sorted <span class="op">=</span> df_merged.sort_values(by<span class="op">=</span><span class="st">&#39;Aumento_Tasa&#39;</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>cinco_menores <span class="op">=</span> df_sorted[<span class="st">&#39;Aumento_Tasa&#39;</span>].head(<span class="dv">5</span>)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>df_merged[df_merged[<span class="st">&#39;Aumento_Tasa&#39;</span>].isin(cinco_menores)]</span></code></pre></div>
 <div class="output execute_result" data-execution_count="12">
 <div>
 <style scoped>
@@ -822,11 +505,6 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a h
 Suazilandia, Bielorrusias, Kazajistán, Lituania y Rusia. A excepción de
 Suazilandia, los países en cuestión pertenecen a Europa del Este.</p>
 </div>
-<div class="cell code" data-execution_count="13">
-<div class="sourceCode" id="cb15"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df_sorted <span class="op">=</span> df_merged.sort_values(by<span class="op">=</span><span class="st">&#39;Aumento_Tasa&#39;</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>cinco_mayores <span class="op">=</span> df_sorted[<span class="st">&#39;Aumento_Tasa&#39;</span>].tail(<span class="dv">5</span>)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>df_merged[df_merged[<span class="st">&#39;Aumento_Tasa&#39;</span>].isin(cinco_mayores)]</span></code></pre></div>
 <div class="output execute_result" data-execution_count="13">
 <div>
 <style scoped>
@@ -917,30 +595,6 @@ tenemos a Lesoto, Guyana, Uruguay, Estados Unidos y Micronesia. Tenemos
 en este caso 3 de los 5 países que pertenecen a América.</p>
 <p>Veremos si existe una tendencia según la localidad del país.</p>
 </div>
-<div class="cell code" data-execution_count="14">
-<div class="sourceCode" id="cb16"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">6</span>))</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>df_agrupado <span class="op">=</span> df_merged.groupby(<span class="st">&#39;ParentLocation&#39;</span>)[<span class="st">&#39;FVN09&#39;</span>].mean().reset_index()</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>sns.barplot(data<span class="op">=</span>df_agrupado, x<span class="op">=</span><span class="st">&#39;ParentLocation&#39;</span>, y<span class="op">=</span><span class="st">&#39;FVN09&#39;</span>, ax<span class="op">=</span>axs[<span class="dv">0</span>], palette<span class="op">=</span><span class="st">&#39;Oranges&#39;</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_xlabel(<span class="st">&#39;Región&#39;</span>)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_ylabel(<span class="st">&#39;Promedio de Tasa de Suicidios 2009&#39;</span>)</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">&#39;Promedio de Tasa de Suicidios por Continente 2009&#39;</span>)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>media_2009 <span class="op">=</span> np.mean(df_agrupado[<span class="st">&#39;FVN09&#39;</span>])</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].axhline(y<span class="op">=</span>media_2009, color<span class="op">=</span><span class="st">&#39;green&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="ss">f&#39;Media: </span><span class="sc">{</span>media_2009<span class="sc">:.2f}</span><span class="ss">&#39;</span>)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].legend()</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>df_agrupado19 <span class="op">=</span> df_merged.groupby(<span class="st">&#39;ParentLocation&#39;</span>)[<span class="st">&#39;FVN19&#39;</span>].mean().reset_index()</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>sns.barplot(data<span class="op">=</span>df_agrupado19, x<span class="op">=</span><span class="st">&#39;ParentLocation&#39;</span>, y<span class="op">=</span><span class="st">&#39;FVN19&#39;</span>, ax<span class="op">=</span>axs[<span class="dv">1</span>], palette<span class="op">=</span><span class="st">&#39;Blues&#39;</span>)</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_xlabel(<span class="st">&#39;Región&#39;</span>)</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_ylabel(<span class="st">&#39;Promedio de Tasa de Suicidios 2019&#39;</span>)</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_title(<span class="st">&#39;Promedio de Tasa de Suicidios por Continente 2019&#39;</span>)</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>media_2019 <span class="op">=</span> np.mean(df_agrupado19[<span class="st">&#39;FVN19&#39;</span>])</span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].axhline(y<span class="op">=</span>media_2019, color<span class="op">=</span><span class="st">&#39;red&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="ss">f&#39;Media: </span><span class="sc">{</span>media_2019<span class="sc">:.2f}</span><span class="ss">&#39;</span>)</span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].legend()</span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/ac69edc3919bf532da467d47d3af0ae3e436a86a.png" /></p>
@@ -960,23 +614,11 @@ factores que afecten las tasas de suicidios, como cultura, avances en
 tratamiento de la salud mental, desarrollo económico, etc.</p>
 </div>
 <div id="790172f6" class="cell markdown">
-<h1
+<h2
 id="3-existe-una-relación-entre-la-tasa-de-suicidios-de-chile-por-cada-100000-habitantes-y-el-nivel-educativo-de-estos">3.
 ¿Existe una relación entre la tasa de suicidios de Chile por cada
-100.000 habitantes y el nivel educativo de estos?</h1>
+100.000 habitantes y el nivel educativo de estos?</h2>
 </div>
-<div id="7ae98adb" class="cell code" data-execution_count="15">
-<div class="sourceCode" id="cb17"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>datasuicidios_chile_2 <span class="op">=</span> pd.read_csv(<span class="st">&quot;Datos/16BBF41_ALL_LATEST.csv&quot;</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>suicidios_chile_2 <span class="op">=</span> datasuicidios_chile_2[datasuicidios_chile_2[<span class="st">&quot;GEO_NAME_SHORT&quot;</span>] <span class="op">==</span> <span class="st">&quot;Chile&quot;</span>]</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>suicidios_chile_2 <span class="op">=</span> suicidios_chile_2[[<span class="st">&quot;DIM_TIME&quot;</span>,<span class="st">&quot;DIM_SEX&quot;</span>,<span class="st">&quot;DIM_AGE&quot;</span>,<span class="st">&quot;VALUE_NUMERIC&quot;</span>]]</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>suicidios_chile_2.rename(columns<span class="op">=</span>{<span class="st">&quot;DIM_TIME&quot;</span>:<span class="st">&quot;AÑO&quot;</span>,<span class="st">&quot;DIM_SEX&quot;</span>:<span class="st">&quot;SEXO&quot;</span>,<span class="st">&quot;DIM_AGE&quot;</span>:<span class="st">&quot;EDADES&quot;</span>,<span class="st">&quot;VALUE_NUMERIC&quot;</span>:<span class="st">&quot;MUERTES&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>edades_deseadas <span class="op">=</span> [<span class="st">&quot;15 to 24 years&quot;</span>, <span class="st">&quot;25 to 34 years&quot;</span>, <span class="st">&quot;35 to 44 years&quot;</span>, <span class="st">&quot;45 to 54 years&quot;</span>, <span class="st">&quot;55 to 64 years&quot;</span>, <span class="st">&quot;65 to 74 years&quot;</span>, <span class="st">&quot;75 to 84 years&quot;</span>, <span class="st">&quot;85 plus years&quot;</span>]</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>df_suicidios <span class="op">=</span> suicidios_chile_2[(suicidios_chile_2[<span class="st">&quot;AÑO&quot;</span>] <span class="op">==</span> <span class="dv">2019</span>) <span class="op">&amp;</span> (suicidios_chile_2[<span class="st">&quot;SEXO&quot;</span>] <span class="op">==</span> <span class="st">&quot;Total&quot;</span>)]</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>df_suicidios <span class="op">=</span> df_suicidios[df_suicidios[<span class="st">&quot;EDADES&quot;</span>].isin(edades_deseadas)]</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>df_suicidios[<span class="st">&quot;MUERTES&quot;</span>] <span class="op">=</span> <span class="bu">round</span>(df_suicidios[<span class="st">&quot;MUERTES&quot;</span>],<span class="dv">1</span>)</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>df_suicidios <span class="op">=</span> df_suicidios[[<span class="st">&quot;EDADES&quot;</span>,<span class="st">&quot;MUERTES&quot;</span>]]</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>df_suicidios</span></code></pre></div>
 <div class="output execute_result" data-execution_count="15">
 <div>
 <style scoped>
@@ -1046,153 +688,6 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a h
 </div>
 </div>
 </div>
-<div class="cell code" data-execution_count="16">
-<div class="sourceCode" id="cb18"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">&quot;Datos/Microdato_Censo2017-Personas.csv&quot;</span>, sep<span class="op">=</span><span class="st">&quot;;&quot;</span>)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>columnas <span class="op">=</span> [<span class="st">&quot;P08&quot;</span>, <span class="co"># Sexo</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;P09&quot;</span>, <span class="co"># Edad</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;P13&quot;</span>, <span class="co"># Asiste actualmente a la educación formal</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;P14&quot;</span>, <span class="co"># Curso o año más alto aprobado</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;P15&quot;</span>, <span class="co"># Nivel del curso más alto aprobado</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;P15A&quot;</span> <span class="co"># Completó el nivel especificado</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>            ]</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[columnas]</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>df.rename(columns<span class="op">=</span>{<span class="st">&quot;P08&quot;</span>:<span class="st">&quot;Sexo&quot;</span>,<span class="st">&quot;P09&quot;</span>:<span class="st">&quot;Edad&quot;</span>,<span class="st">&quot;P13&quot;</span>:<span class="st">&quot;Estudia&quot;</span>,</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;P14&quot;</span>:<span class="st">&quot;Año&quot;</span>,<span class="st">&quot;P15&quot;</span>:<span class="st">&quot;Nivel&quot;</span>,<span class="st">&quot;P15A&quot;</span>:<span class="st">&quot;Completado&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>df.replace({<span class="dv">99</span>:np.nan, <span class="dv">98</span>:np.nan}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>df_clean <span class="op">=</span> df.dropna()</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="17">
-<div class="sourceCode" id="cb19"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&quot;Edad&quot;</span>] <span class="op">=</span> df_clean[<span class="st">&quot;Edad&quot;</span>].astype(<span class="bu">int</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&quot;Estudia&quot;</span>] <span class="op">=</span> df_clean[<span class="st">&quot;Estudia&quot;</span>].astype(<span class="bu">int</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&quot;Año&quot;</span>] <span class="op">=</span> df_clean[<span class="st">&quot;Año&quot;</span>].astype(<span class="bu">int</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&quot;Nivel&quot;</span>] <span class="op">=</span> df_clean[<span class="st">&quot;Nivel&quot;</span>].astype(<span class="bu">int</span>)</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&quot;Completado&quot;</span>] <span class="op">=</span> df_clean[<span class="st">&quot;Completado&quot;</span>].astype(<span class="bu">int</span>)</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&quot;Sexo&quot;</span>].replace({<span class="dv">1</span>:<span class="st">&quot;Hombre&quot;</span>,<span class="dv">2</span>:<span class="st">&quot;Mujer&quot;</span>},inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&quot;Estudia&quot;</span>].replace({<span class="dv">1</span>:<span class="st">&quot;Si&quot;</span>,<span class="dv">2</span>:<span class="st">&quot;No&quot;</span>,<span class="dv">3</span>:<span class="st">&quot;Nunca&quot;</span>},inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&quot;Nivel_Nombre&quot;</span>] <span class="op">=</span> df_clean[<span class="st">&quot;Nivel&quot;</span>].replace({<span class="dv">1</span>:<span class="st">&quot;Sala cuna o jardín infantil&quot;</span>,</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">2</span>:<span class="st">&quot;Prekínder&quot;</span>,</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">3</span>:<span class="st">&quot;Kínder&quot;</span>,</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">4</span>:<span class="st">&quot;Especial o diferencial&quot;</span>,</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">5</span>:<span class="st">&quot;Educación básica&quot;</span>,</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">6</span>:<span class="st">&quot;Primaria o preparatorio (sistema antiguo)&quot;</span>,</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">7</span>:<span class="st">&quot;Científico-humanista&quot;</span>,</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">8</span>:<span class="st">&quot;Técnica profesional&quot;</span>,</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">9</span>:<span class="st">&quot;Humanidades (sistema antiguo)&quot;</span>,</span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">10</span>:<span class="st">&quot;Técnica comercial, industrial/normalista (sistema antiguo)&quot;</span>,</span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">11</span>:<span class="st">&quot;Técnico superior (1-3 años)&quot;</span>,</span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">12</span>:<span class="st">&quot;Profesional (4 o más años)&quot;</span>,</span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">13</span>:<span class="st">&quot;Magíster&quot;</span>,</span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>                            <span class="dv">14</span>:<span class="st">&quot;Doctorado&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&quot;Completado&quot;</span>].replace({<span class="dv">1</span>:<span class="st">&quot;Si&quot;</span>,<span class="dv">2</span>:<span class="st">&quot;No&quot;</span>},inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>categorias <span class="op">=</span> [<span class="st">&quot;15 to 24 years&quot;</span>,<span class="st">&quot;25 to 34 years&quot;</span>,<span class="st">&quot;35 to 44 years&quot;</span>,<span class="st">&quot;45 to 54 years&quot;</span>,<span class="st">&quot;55 to 64 years&quot;</span>,<span class="st">&quot;65 to 74 years&quot;</span>,<span class="st">&quot;75 to 84 years&quot;</span>,<span class="st">&quot;85 plus years&quot;</span>]</span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&quot;EDADES&quot;</span>] <span class="op">=</span> pd.cut(df[<span class="st">&quot;Edad&quot;</span>], bins<span class="op">=</span>[<span class="dv">15</span>,<span class="dv">25</span>,<span class="dv">35</span>,<span class="dv">45</span>,<span class="dv">55</span>,<span class="dv">65</span>,<span class="dv">75</span>,<span class="dv">85</span>,<span class="bu">float</span>(<span class="st">&quot;inf&quot;</span>)], labels<span class="op">=</span>categorias, include_lowest<span class="op">=</span><span class="va">True</span>, right<span class="op">=</span><span class="va">False</span>)</span></code></pre></div>
-<div class="output stream stderr">
-<pre><code>/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:1: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame.
-Try using .loc[row_indexer,col_indexer] = value instead
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;Edad&quot;] = df_clean[&quot;Edad&quot;].astype(int)
-/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:2: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame.
-Try using .loc[row_indexer,col_indexer] = value instead
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;Estudia&quot;] = df_clean[&quot;Estudia&quot;].astype(int)
-/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:3: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame.
-Try using .loc[row_indexer,col_indexer] = value instead
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;Año&quot;] = df_clean[&quot;Año&quot;].astype(int)
-/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:4: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame.
-Try using .loc[row_indexer,col_indexer] = value instead
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;Nivel&quot;] = df_clean[&quot;Nivel&quot;].astype(int)
-/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:5: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame.
-Try using .loc[row_indexer,col_indexer] = value instead
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;Completado&quot;] = df_clean[&quot;Completado&quot;].astype(int)
-/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:6: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;Sexo&quot;].replace({1:&quot;Hombre&quot;,2:&quot;Mujer&quot;},inplace=True)
-/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:7: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;Estudia&quot;].replace({1:&quot;Si&quot;,2:&quot;No&quot;,3:&quot;Nunca&quot;},inplace=True)
-/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:8: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;Nivel_Nombre&quot;] = df_clean[&quot;Nivel&quot;].replace({1:&quot;Sala cuna o jardín infantil&quot;,
-/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:8: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame.
-Try using .loc[row_indexer,col_indexer] = value instead
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;Nivel_Nombre&quot;] = df_clean[&quot;Nivel&quot;].replace({1:&quot;Sala cuna o jardín infantil&quot;,
-/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:22: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;Completado&quot;].replace({1:&quot;Si&quot;,2:&quot;No&quot;},inplace=True)
-/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/2322813895.py:25: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame.
-Try using .loc[row_indexer,col_indexer] = value instead
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df_clean[&quot;EDADES&quot;] = pd.cut(df[&quot;Edad&quot;], bins=[15,25,35,45,55,65,75,85,float(&quot;inf&quot;)], labels=categorias, include_lowest=True, right=False)
-</code></pre>
-</div>
-</div>
-<div class="cell code" data-execution_count="18">
-<div class="sourceCode" id="cb21"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df_todo <span class="op">=</span> pd.merge(df_clean, df_suicidios, how<span class="op">=</span><span class="st">&quot;left&quot;</span>, on<span class="op">=</span><span class="st">&quot;EDADES&quot;</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>df_todo <span class="op">=</span> df_todo[[<span class="st">&quot;Sexo&quot;</span>,<span class="st">&quot;Edad&quot;</span>,<span class="st">&quot;Estudia&quot;</span>,<span class="st">&quot;Año&quot;</span>,<span class="st">&quot;Nivel&quot;</span>,<span class="st">&quot;Completado&quot;</span>,<span class="st">&quot;EDADES&quot;</span>,<span class="st">&quot;MUERTES&quot;</span>]]</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>df_todo <span class="op">=</span> df_todo.dropna()</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>grupo_mapping <span class="op">=</span> {</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Científico-humanista&#39;</span>: <span class="st">&#39;media&#39;</span>,</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Educación básica&#39;</span>: <span class="st">&#39;basica&#39;</span>,</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Profesional (4 o más años)&#39;</span>: <span class="st">&#39;superior&#39;</span>,</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Técnica profesional&#39;</span>: <span class="st">&#39;media&#39;</span>,</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Técnico superior (1-3 años)&#39;</span>: <span class="st">&#39;superior&#39;</span>,</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Primaria o preparatorio (sistema antiguo)&#39;</span>: <span class="st">&#39;basica&#39;</span>,</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Humanidades (sistema antiguo)&#39;</span>: <span class="st">&#39;media&#39;</span>,</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Magíster&#39;</span>: <span class="st">&#39;superior&#39;</span>,</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Técnica comercial, industrial/normalista (sistema antiguo)&#39;</span>: <span class="st">&#39;media&#39;</span>,</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Doctorado&#39;</span>: <span class="st">&#39;superior&#39;</span>,</span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Especial o diferencial&#39;</span>: <span class="st">&#39;basica&#39;</span>,</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Kínder&#39;</span>: <span class="st">&#39;basica&#39;</span>,</span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Sala cuna o jardín infantil&#39;</span>: <span class="st">&#39;basica&#39;</span>,</span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Prekínder&#39;</span>: <span class="st">&#39;basica&#39;</span></span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>df_todo[<span class="st">&#39;Grupo&#39;</span>] <span class="op">=</span> df_todo[<span class="st">&#39;Nivel&#39;</span>].<span class="bu">map</span>(grupo_mapping)</span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>orden_categorias <span class="op">=</span> [<span class="st">&#39;basica&#39;</span>, <span class="st">&#39;media&#39;</span>, <span class="st">&#39;superior&#39;</span>]</span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>df_todo[<span class="st">&#39;Grupo&#39;</span>] <span class="op">=</span> pd.Categorical(df_todo[<span class="st">&#39;Grupo&#39;</span>], categories<span class="op">=</span>orden_categorias, ordered<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="19">
-<div class="sourceCode" id="cb22"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>tabla <span class="op">=</span> pd.crosstab(df_todo[<span class="st">&quot;Grupo&quot;</span>],df_todo[<span class="st">&quot;MUERTES&quot;</span>])</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="20">
-<div class="sourceCode" id="cb23"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> tabla.plot(kind<span class="op">=</span><span class="st">&#39;bar&#39;</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">&#39;Suicidios cada 100.000 habitantes según su nivel educacional&#39;</span>)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&#39;Nivel&#39;</span>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&#39;Cantidad de suicidios&#39;</span>)</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>ax.legend([<span class="st">&quot;7 --&gt; [15,24] años&quot;</span>, <span class="st">&quot;10 --&gt; [25,34] años&quot;</span>, <span class="st">&quot;11 --&gt; [35,44] años&quot;</span>, <span class="st">&quot;12 --&gt; [45,54] años&quot;</span>, <span class="st">&quot;12 --&gt; [55,64] años&quot;</span>, <span class="st">&quot;14 --&gt; [65,74] años&quot;</span>, <span class="st">&quot;14 --&gt; [75,84] años&quot;</span>, <span class="st">&quot;15 --&gt; [85,100] años&quot;</span>], title<span class="op">=</span><span class="st">&#39;Cantidad suicidios&#39;</span>)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels(tabla.index, rotation<span class="op">=</span><span class="dv">45</span>, ha<span class="op">=</span><span class="st">&#39;right&#39;</span>)</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/9621e16916c99fc19ba8bdb09db55a75c7b4f7d8.png" /></p>
@@ -1218,348 +713,10 @@ factores, entre ellos la salud mental, el respaldo social y el acceso a
 la atención médica.</p>
 </div>
 <div id="f0eeeba7" class="cell markdown">
-<h1
+<h2
 id="4-cómo-afecta-la-religión-a-la-tasa-de-suicidios-en-diferentes-países">4.
 ¿Cómo afecta la religión a la tasa de suicidios en diferentes
-países?</h1>
-</div>
-<section id="obtencion-de-datos" class="cell markdown">
-<h4>Obtencion de datos</h4>
-</section>
-<div class="cell code" data-execution_count="21">
-<div class="sourceCode" id="cb24"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>url_porcentaje_creyentes <span class="op">=</span> <span class="st">&quot;https://countryeconomy.com/demography/religions&quot;</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>page <span class="op">=</span> rq.get(url_porcentaje_creyentes).text</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>soup <span class="op">=</span> bs(page)</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>tables <span class="op">=</span> soup.find_all(<span class="st">&#39;table&#39;</span>)</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>df_porcentaje_creyentes <span class="op">=</span> pd.DataFrame(columns<span class="op">=</span>[<span class="st">&quot;Countries&quot;</span>,<span class="st">&quot;Religious&quot;</span>])</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">#Solo hay 1 tabla en la pagina, por lo que solo se toma la primera</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> row <span class="kw">in</span> tables[<span class="dv">0</span>].tbody.find_all(<span class="st">&quot;tr&quot;</span>):</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> row.find_all(<span class="st">&quot;td&quot;</span>)</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (col <span class="op">!=</span> []):</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        country <span class="op">=</span> col[<span class="dv">0</span>].text.strip()</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>        religion <span class="op">=</span> col[<span class="dv">1</span>].text.strip()</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>        new_row <span class="op">=</span> pd.DataFrame({<span class="st">&quot;Countries&quot;</span>:[country],<span class="st">&quot;Religious&quot;</span>:[religion]})</span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>        df_porcentaje_creyentes <span class="op">=</span> pd.concat([df_porcentaje_creyentes, new_row], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="co">#Limpiar la columna countries</span></span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>df_porcentaje_creyentes[<span class="st">&quot;Countries&quot;</span>] <span class="op">=</span> df_porcentaje_creyentes[<span class="st">&quot;Countries&quot;</span>].<span class="bu">str</span>.split(<span class="st">&quot;[&quot;</span>).<span class="bu">str</span>[<span class="dv">0</span>]</span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>df_porcentaje_creyentes[<span class="st">&quot;Countries&quot;</span>] <span class="op">=</span> df_porcentaje_creyentes[<span class="st">&quot;Countries&quot;</span>].<span class="bu">str</span>.strip()</span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="co">#Dejar la columna religious con valor numerico</span></span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>df_porcentaje_creyentes[<span class="st">&quot;Religious&quot;</span>] <span class="op">=</span> df_porcentaje_creyentes[<span class="st">&quot;Religious&quot;</span>].<span class="bu">str</span>.replace(<span class="st">&quot;%&quot;</span>,<span class="st">&quot;&quot;</span>)</span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>df_porcentaje_creyentes[<span class="st">&quot;Religious&quot;</span>] <span class="op">=</span> df_porcentaje_creyentes[<span class="st">&quot;Religious&quot;</span>].astype(<span class="bu">float</span>)</span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>df_porcentaje_creyentes.rename(columns<span class="op">=</span>{<span class="st">&quot;Countries&quot;</span>:<span class="st">&quot;Location&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>df_porcentaje_creyentes.rename(columns<span class="op">=</span>{<span class="st">&quot;Religious&quot;</span>:<span class="st">&quot;Religious %&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="22">
-<div class="sourceCode" id="cb25"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>url_population <span class="op">=</span> <span class="st">&quot;https://en.wikipedia.org/wiki/List_of_countries_by_population_in_2010&quot;</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>page <span class="op">=</span> rq.get(url_population).text</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>soup <span class="op">=</span> bs(page)</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>tables <span class="op">=</span> soup.find_all(<span class="st">&#39;table&#39;</span>)</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>df_population <span class="op">=</span> pd.DataFrame(columns<span class="op">=</span>[<span class="st">&quot;Location&quot;</span>,<span class="st">&quot;Population&quot;</span>])</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co">#Usaremos la 2da tabla de la pagina</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> row <span class="kw">in</span> tables[<span class="dv">1</span>].tbody.find_all(<span class="st">&quot;tr&quot;</span>):</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> row.find_all(<span class="st">&quot;td&quot;</span>)</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (col <span class="op">!=</span> []):</span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>        country <span class="op">=</span> col[<span class="dv">1</span>].text.strip()</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>        population <span class="op">=</span> col[<span class="dv">2</span>].text.strip()</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>        new_row <span class="op">=</span> pd.DataFrame({<span class="st">&quot;Location&quot;</span>:[country],<span class="st">&quot;Population&quot;</span>:[population]})</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>        df_population <span class="op">=</span> pd.concat([df_population, new_row], ignore_index<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
-</div>
-<section id="dataframe-y-limpieza-de-datos" class="cell markdown">
-<h4>Dataframe y limpieza de datos</h4>
-</section>
-<div id="4b617018" class="cell code" data-execution_count="23">
-<div class="sourceCode" id="cb26"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>df_porcentaje_religion <span class="op">=</span> pd.read_excel(<span class="st">&#39;Datos/Religious_Composition_by_Country_2010-2050.xlsx&#39;</span>,)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>df_porcentaje_religion <span class="op">=</span> df_porcentaje_religion[df_porcentaje_religion[<span class="st">&quot;Year&quot;</span>]<span class="op">==</span><span class="dv">2010</span>]</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>suicidios_2010 <span class="op">=</span> df_suicidio_oms_clean[df_suicidio_oms_clean[<span class="st">&#39;Period&#39;</span>] <span class="op">==</span> <span class="dv">2010</span>]</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>suicidios_2010 <span class="op">=</span> suicidios_2010[suicidios_2010[<span class="st">&#39;Dim1&#39;</span>] <span class="op">==</span> <span class="st">&quot;Both sexes&quot;</span>]</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Hacer merge de ambos dataframe segun Country(en df_suicidios) y Location(en df_porcentaje_religion)</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>suicidios_religion_2010 <span class="op">=</span> suicidios_2010.merge(df_porcentaje_religion, left_on<span class="op">=</span><span class="st">&quot;Location&quot;</span>, right_on<span class="op">=</span><span class="st">&quot;Country&quot;</span>, how<span class="op">=</span><span class="st">&quot;left&quot;</span>)</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Eliminar columnas innecesarias (row_number,level,Nation_fk,Year,Region,Country)</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>suicidios_religion_2010.drop(columns<span class="op">=</span>[<span class="st">&#39;row_number&#39;</span>,<span class="st">&#39;level&#39;</span>,<span class="st">&#39;Nation_fk&#39;</span>,<span class="st">&#39;Year&#39;</span>,<span class="st">&#39;Region&#39;</span>,<span class="st">&#39;Country&#39;</span>,<span class="st">&#39;Unaffiliated&#39;</span>,<span class="st">&quot;All Religions&quot;</span>,<span class="st">&quot;Dim1&quot;</span>,<span class="st">&quot;Period&quot;</span>,<span class="st">&quot;CodigoPais&quot;</span>], inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>suicidios_religion_2010.dropna(inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">#Hacemos merge con el dataframe de poblacion</span></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>suicidios_religion_2010 <span class="op">=</span> suicidios_religion_2010.merge(df_population, on<span class="op">=</span><span class="st">&quot;Location&quot;</span>, how<span class="op">=</span><span class="st">&quot;left&quot;</span>)</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co">#hacemos merge con el dataframe de porcentaje de creyentes</span></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>suicidios_religion_2010 <span class="op">=</span> suicidios_religion_2010.merge(df_porcentaje_creyentes, on<span class="op">=</span><span class="st">&quot;Location&quot;</span>, how<span class="op">=</span><span class="st">&quot;left&quot;</span>)</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Arreglamos columnas</span></span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>suicidios_religion_2010.rename(columns<span class="op">=</span>{<span class="st">&quot;FactValueNumeric&quot;</span>:<span class="st">&quot;Suicides per 100K&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>suicidios_religion_2010[<span class="st">&#39;Population&#39;</span>] <span class="op">=</span> pd.to_numeric(suicidios_religion_2010[<span class="st">&#39;Population&#39;</span>].replace(<span class="st">&#39;,&#39;</span>, <span class="st">&#39;&#39;</span>, regex<span class="op">=</span><span class="va">True</span>), errors<span class="op">=</span><span class="st">&#39;coerce&#39;</span>)</span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="co">#Mostrar dataframe con random de 10 filas</span></span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>suicidios_religion_2010.sample(<span class="dv">15</span>)</span></code></pre></div>
-<div class="output stream stderr">
-<pre><code>/Users/mardrouilly/anaconda3/lib/python3.11/site-packages/openpyxl/worksheet/_read_only.py:79: UserWarning: Unknown extension is not supported and will be removed
-  for idx, row in parser.parse():
-</code></pre>
-</div>
-<div class="output execute_result" data-execution_count="23">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ParentLocation</th>
-      <th>Location</th>
-      <th>Suicides per 100K</th>
-      <th>Christians</th>
-      <th>Muslims</th>
-      <th>Hindus</th>
-      <th>Buddhists</th>
-      <th>Folk Religions</th>
-      <th>Other Religions</th>
-      <th>Jews</th>
-      <th>Population</th>
-      <th>Religious %</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>119</th>
-      <td>Europe</td>
-      <td>Netherlands</td>
-      <td>9.81</td>
-      <td>8,410,000</td>
-      <td>1,000,000</td>
-      <td>80,000</td>
-      <td>40,000</td>
-      <td>30,000</td>
-      <td>30,000</td>
-      <td>30,000</td>
-      <td>16574989.0</td>
-      <td>66.00</td>
-    </tr>
-    <tr>
-      <th>83</th>
-      <td>Eastern Mediterranean</td>
-      <td>Qatar</td>
-      <td>8.23</td>
-      <td>240,000</td>
-      <td>1,190,000</td>
-      <td>240,000</td>
-      <td>50,000</td>
-      <td>&lt;10,000</td>
-      <td>10,000</td>
-      <td>&lt;10,000</td>
-      <td>1699435.0</td>
-      <td>98.23</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Africa</td>
-      <td>Burkina Faso</td>
-      <td>8.03</td>
-      <td>3,710,000</td>
-      <td>10,150,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>2,530,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>15730977.0</td>
-      <td>99.50</td>
-    </tr>
-    <tr>
-      <th>113</th>
-      <td>Europe</td>
-      <td>Kyrgyzstan</td>
-      <td>11.38</td>
-      <td>610,000</td>
-      <td>4,690,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>5418300.0</td>
-      <td>95.00</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>Africa</td>
-      <td>Equatorial Guinea</td>
-      <td>10.03</td>
-      <td>620,000</td>
-      <td>30,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>1313000.0</td>
-      <td>96.56</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Africa</td>
-      <td>Angola</td>
-      <td>6.97</td>
-      <td>17,270,000</td>
-      <td>40,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>790,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>18992708.0</td>
-      <td>98.21</td>
-    </tr>
-    <tr>
-      <th>55</th>
-      <td>Americas</td>
-      <td>Grenada</td>
-      <td>0.94</td>
-      <td>100,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>109553.0</td>
-      <td>95.19</td>
-    </tr>
-    <tr>
-      <th>150</th>
-      <td>Western Pacific</td>
-      <td>Philippines</td>
-      <td>2.36</td>
-      <td>86,370,000</td>
-      <td>5,150,000</td>
-      <td>&lt;10,000</td>
-      <td>80,000</td>
-      <td>1,430,000</td>
-      <td>130,000</td>
-      <td>&lt;10,000</td>
-      <td>92337852.0</td>
-      <td>99.07</td>
-    </tr>
-    <tr>
-      <th>46</th>
-      <td>Americas</td>
-      <td>Brazil</td>
-      <td>4.99</td>
-      <td>173,300,000</td>
-      <td>40,000</td>
-      <td>&lt;10,000</td>
-      <td>250,000</td>
-      <td>5,540,000</td>
-      <td>300,000</td>
-      <td>110,000</td>
-      <td>193252604.0</td>
-      <td>91.50</td>
-    </tr>
-    <tr>
-      <th>143</th>
-      <td>Western Pacific</td>
-      <td>Fiji</td>
-      <td>9.64</td>
-      <td>550,000</td>
-      <td>50,000</td>
-      <td>240,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>850700.0</td>
-      <td>98.95</td>
-    </tr>
-    <tr>
-      <th>101</th>
-      <td>Europe</td>
-      <td>Estonia</td>
-      <td>18.79</td>
-      <td>540,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>1340127.0</td>
-      <td>30.97</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>Africa</td>
-      <td>Central African Republic</td>
-      <td>15.75</td>
-      <td>3,940,000</td>
-      <td>370,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>40,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>4505945.0</td>
-      <td>98.76</td>
-    </tr>
-    <tr>
-      <th>115</th>
-      <td>Europe</td>
-      <td>Luxembourg</td>
-      <td>12.01</td>
-      <td>360,000</td>
-      <td>10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>502066.0</td>
-      <td>95.04</td>
-    </tr>
-    <tr>
-      <th>107</th>
-      <td>Europe</td>
-      <td>Hungary</td>
-      <td>25.52</td>
-      <td>8,090,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>&lt;10,000</td>
-      <td>10,000</td>
-      <td>10014324.0</td>
-      <td>72.84</td>
-    </tr>
-    <tr>
-      <th>38</th>
-      <td>Africa</td>
-      <td>Uganda</td>
-      <td>6.33</td>
-      <td>28,980,000</td>
-      <td>3,840,000</td>
-      <td>100,000</td>
-      <td>&lt;10,000</td>
-      <td>290,000</td>
-      <td>40,000</td>
-      <td>&lt;10,000</td>
-      <td>31784600.0</td>
-      <td>99.57</td>
-    </tr>
-  </tbody>
-</table>
+países?</h2>
 </div>
 </div>
 </div>
@@ -1570,33 +727,6 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a h
 class="cell markdown">
 <h5>Paises mas religiosos vs menos religiosos</h5>
 </section>
-<div class="cell code" data-execution_count="24">
-<div class="sourceCode" id="cb28"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Seleccionamos top 10 de paises mas religiosos</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>top_10_religiosos <span class="op">=</span> suicidios_religion_2010.sort_values(by<span class="op">=</span><span class="st">&quot;Religious %&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">15</span>)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Seleccionamos top 10 de paises menos religiosos</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>top_10_no_religiosos <span class="op">=</span> suicidios_religion_2010.sort_values(by<span class="op">=</span><span class="st">&quot;Religious %&quot;</span>, ascending<span class="op">=</span><span class="va">True</span>).head(<span class="dv">15</span>)</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Sacamos el promedio de suicidios por cada 100mil habitantes de ambos grupos</span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>promedio_religiosos <span class="op">=</span> top_10_religiosos[<span class="st">&quot;Suicides per 100K&quot;</span>].mean()</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>promedio_no_religiosos <span class="op">=</span> top_10_no_religiosos[<span class="st">&quot;Suicides per 100K&quot;</span>].mean()</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Los comparamos en un grafico de barras</span></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">5</span>))</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>)</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Top 15 de paises mas religiosos&quot;</span>)</span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>sns.barplot(data<span class="op">=</span>top_10_religiosos, x<span class="op">=</span><span class="st">&quot;Location&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>)</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>plt.axhline(promedio_religiosos, color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>)</span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Top 15 de paises menos religiosos&quot;</span>)</span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>sns.barplot(data<span class="op">=</span>top_10_no_religiosos, x<span class="op">=</span><span class="st">&quot;Location&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>)</span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>plt.axhline(promedio_no_religiosos, color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>plt.legend(labels<span class="op">=</span>[<span class="st">&quot;Promedio de suicidios&quot;</span>])</span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="co">#Agregamos una descripcion que aclare que son datos de 2010</span></span>
-<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>plt.figtext(<span class="fl">0.5</span>, <span class="fl">0.01</span>, <span class="st">&quot;2010&quot;</span>, ha<span class="op">=</span><span class="st">&quot;center&quot;</span>, fontsize<span class="op">=</span><span class="dv">12</span>, bbox<span class="op">=</span>{<span class="st">&quot;facecolor&quot;</span>:<span class="st">&quot;orange&quot;</span>, <span class="st">&quot;alpha&quot;</span>:<span class="fl">0.5</span>, <span class="st">&quot;pad&quot;</span>:<span class="dv">5</span>})</span>
-<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a></span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/f428a46512491505740fb72d1b6385b78e149228.png" /></p>
@@ -1615,34 +745,6 @@ id="hay-alguna-religion-que-tienda-a-tener-mas-suicidios-que-otras"
 class="cell markdown">
 <h4>Hay alguna religion que tienda a tener mas suicidios que otras?</h4>
 </section>
-<div class="cell code" data-execution_count="25">
-<div class="sourceCode" id="cb29"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Ordenamos el dataframe por religion. Es decir en cada row, veremos cual es la religion predominante (Mayor numero respecto a la poblacion total)</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Para ello, agregaremos una columna(&#39;predominant&#39;) con la religion predominante por pais, siendo las opciones: Christians,Muslims,Hindus,Buddhists,Folk Religions,Other Religions, Jews </span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>religion_columns <span class="op">=</span> [<span class="st">&#39;Christians&#39;</span>, <span class="st">&#39;Muslims&#39;</span>, <span class="st">&#39;Hindus&#39;</span>, <span class="st">&#39;Buddhists&#39;</span>, <span class="st">&#39;Folk Religions&#39;</span>, <span class="st">&#39;Other Religions&#39;</span>, <span class="st">&#39;Jews&#39;</span>]</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>religions_df <span class="op">=</span> suicidios_religion_2010.copy()</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> religion_columns:</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convertimos a numeros</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    religions_df[col] <span class="op">=</span> religions_df[col].replace(<span class="st">&#39;&lt;&#39;</span>, <span class="st">&#39;&#39;</span>, regex<span class="op">=</span><span class="va">True</span>).replace(<span class="st">&#39;,&#39;</span>, <span class="st">&#39;&#39;</span>, regex<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    religions_df[col] <span class="op">=</span> pd.to_numeric(religions_df[col], errors<span class="op">=</span><span class="st">&#39;coerce&#39;</span>)</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>religions_df[<span class="st">&#39;Predominant Religion&#39;</span>] <span class="op">=</span> religions_df[religion_columns].idxmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co">#Eliminamos todas las columnas que no sean necesarias: Christians,Musilms...etc</span></span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> religion <span class="kw">in</span> religion_columns:</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>    religions_df.drop(columns<span class="op">=</span>[religion], inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Creamos un dataframe agrupado por &#39;Predominant Religion&#39; y calculamos el promedio de suicidios &#39;Suicides per 100K&#39;</span></span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>grouped_df <span class="op">=</span> religions_df.groupby(<span class="st">&#39;Predominant Religion&#39;</span>).agg({<span class="st">&#39;Population&#39;</span>: <span class="st">&#39;sum&#39;</span>, <span class="st">&#39;Suicides per 100K&#39;</span>: <span class="st">&#39;mean&#39;</span>})</span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>grouped_df <span class="op">=</span> grouped_df.reset_index()</span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="co">#Ajustamos el numero sucidies per 100k para que sea mas legible</span></span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>grouped_df[<span class="st">&#39;Suicides per 100K&#39;</span>] <span class="op">=</span> grouped_df[<span class="st">&#39;Suicides per 100K&#39;</span>].<span class="bu">round</span>(<span class="dv">2</span>)</span></code></pre></div>
-</div>
-<div class="cell code" data-execution_count="26">
-<div class="sourceCode" id="cb30"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Creamos la columna &#39;Suicides per population&#39; que es se calcula: (population * suicides per 100k) / 100000</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>grouped_df[<span class="st">&#39;Suicides per population&#39;</span>] <span class="op">=</span> (grouped_df[<span class="st">&#39;Population&#39;</span>] <span class="op">*</span> grouped_df[<span class="st">&#39;Suicides per 100K&#39;</span>]) <span class="op">/</span> <span class="dv">100000</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>grouped_df[<span class="st">&#39;Suicides per population&#39;</span>] <span class="op">=</span> grouped_df[<span class="st">&#39;Suicides per population&#39;</span>].<span class="bu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>grouped_df</span></code></pre></div>
 <div class="output execute_result" data-execution_count="26">
 <div>
 <style scoped>
@@ -1716,18 +818,6 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a h
 </div>
 </div>
 </div>
-<div class="cell code" data-execution_count="27">
-<div class="sourceCode" id="cb31"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> sns.catplot(</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>grouped_df, kind<span class="op">=</span><span class="st">&quot;bar&quot;</span>,</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">&quot;Predominant Religion&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>, hue<span class="op">=</span><span class="st">&quot;Suicides per population&quot;</span>,</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span><span class="st">&quot;dark&quot;</span>, alpha<span class="op">=</span><span class="fl">.6</span>, height<span class="op">=</span><span class="dv">6</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>g.despine(left<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>g.set_axis_labels(<span class="st">&quot;&quot;</span>, <span class="st">&quot;Suicides per 100k&quot;</span>)</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>g.legend.set_title(<span class="st">&quot;Suicides per population&quot;</span>)</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Suicides per 100k by Religion&quot;</span>)</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/686f9d0882e419466c05fbb8f1bcddb75b91da5a.png" /></p>
@@ -1756,23 +846,6 @@ otras.</strong></p>
 <section id="mapas" class="cell markdown">
 <h4>Mapas</h4>
 </section>
-<div class="cell code" data-execution_count="28">
-<div class="sourceCode" id="cb32"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Mapa con geopandas</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>world <span class="op">=</span> gpd.read_file(gpd.datasets.get_path(<span class="st">&#39;naturalearth_lowres&#39;</span>))</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>merged <span class="op">=</span> world.set_index(<span class="st">&#39;name&#39;</span>).join(religions_df.set_index(<span class="st">&#39;Location&#39;</span>))</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">12</span>))</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>merged.plot(column<span class="op">=</span><span class="st">&#39;Religious %&#39;</span>, ax<span class="op">=</span>ax1, legend<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>ax1.set_title(<span class="st">&#39;Religious %(2010)&#39;</span>)</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>merged.plot(column<span class="op">=</span><span class="st">&#39;Suicides per 100K&#39;</span>, ax<span class="op">=</span>ax2, legend<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>ax2.set_title(<span class="st">&#39;Suicides per 100K(2010)&#39;</span>)</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span></code></pre></div>
-<div class="output stream stderr">
-<pre><code>/var/folders/yr/1dwzyqt511jb113_wtkjnp640000gn/T/ipykernel_5111/3473983891.py:2: FutureWarning: The geopandas.dataset module is deprecated and will be removed in GeoPandas 1.0. You can get the original &#39;naturalearth_lowres&#39; data from https://www.naturalearthdata.com/downloads/110m-cultural-vectors/.
-  world = gpd.read_file(gpd.datasets.get_path(&#39;naturalearth_lowres&#39;))
-</code></pre>
-</div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/3e3afbe667c25f7e49728f5c338ac6d6933ea5e3.png" /></p>
@@ -1781,24 +854,6 @@ src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/3e3afbe667c25f7e49728f5c338ac6d69
 <section id="correlaciones" class="cell markdown">
 <h4>Correlaciones</h4>
 </section>
-<div class="cell code" data-execution_count="29">
-<div class="sourceCode" id="cb34"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Graficos de correlacion df: religions_df</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">5</span>))</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>)</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Suicides per 100K vs Religious %&quot;</span>)</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>religions_df, x<span class="op">=</span><span class="st">&quot;Religious %&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>)</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Agregamos linea de regresion</span></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>sns.regplot(data<span class="op">=</span>religions_df, x<span class="op">=</span><span class="st">&quot;Religious %&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>, scatter<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">&quot;red&quot;</span>, label<span class="op">=</span><span class="st">&quot;Regresion lineal&quot;</span>)</span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>plt.figtext(<span class="fl">0.5</span>, <span class="fl">0.01</span>, <span class="st">&quot;Datos de 2010&quot;</span>, ha<span class="op">=</span><span class="st">&quot;center&quot;</span>, fontsize<span class="op">=</span><span class="dv">12</span>, bbox<span class="op">=</span>{<span class="st">&quot;facecolor&quot;</span>:<span class="st">&quot;orange&quot;</span>, <span class="st">&quot;alpha&quot;</span>:<span class="fl">0.5</span>, <span class="st">&quot;pad&quot;</span>:<span class="dv">5</span>})</span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>)</span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Suicides per 100K vs Predominant Religion&quot;</span>)</span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>religions_df, x<span class="op">=</span><span class="st">&quot;Predominant Religion&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>)</span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="co">#Mapa de calor de correlacion entre suicidies per 100k y religious %</span></span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a></span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/9c9396852448d28d1a097fc55302a823871914ca.png" /></p>
@@ -1808,16 +863,6 @@ src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/9c9396852448d28d1a097fc55302a8238
 class="cell markdown">
 <h4>Los paises con mas suicidios son los mas religiosos?</h4>
 </section>
-<div class="cell code" data-execution_count="30">
-<div class="sourceCode" id="cb35"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Buscar el pais con mayor cantidad de suicidios de cada region (columna:ParentLocation)</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>suicidios_region_mas <span class="op">=</span> religions_df.groupby(<span class="st">&quot;ParentLocation&quot;</span>).agg({<span class="st">&quot;Suicides per 100K&quot;</span>:<span class="st">&quot;max&quot;</span>})</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>suicidios_region_mas <span class="op">=</span> suicidios_region_mas.reset_index()</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>suicidios_region_mas <span class="op">=</span> suicidios_region_mas.merge(religions_df, on<span class="op">=</span>[<span class="st">&quot;ParentLocation&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>])</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>suicidios_region_mas <span class="op">=</span> suicidios_region_mas[[<span class="st">&quot;ParentLocation&quot;</span>,<span class="st">&quot;Location&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>,<span class="st">&quot;Religious %&quot;</span>,<span class="st">&quot;Predominant Religion&quot;</span>]]</span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>suicidios_region_mas.rename(columns<span class="op">=</span>{<span class="st">&quot;ParentLocation&quot;</span>:<span class="st">&quot;Region&quot;</span>,<span class="st">&quot;Location&quot;</span>:<span class="st">&quot;Country&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>:<span class="st">&quot;Suicides per 100K (max)&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>suicidios_region_mas.sort_values(by<span class="op">=</span><span class="st">&quot;Suicides per 100K (max)&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>suicidios_region_mas</span></code></pre></div>
 <div class="output execute_result" data-execution_count="30">
 <div>
 <style scoped>
@@ -1898,15 +943,6 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a h
 </div>
 </div>
 </div>
-<div class="cell code" data-execution_count="31">
-<div class="sourceCode" id="cb36"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>suicidios_region_menos <span class="op">=</span> religions_df.groupby(<span class="st">&quot;ParentLocation&quot;</span>).agg({<span class="st">&quot;Suicides per 100K&quot;</span>:<span class="st">&quot;min&quot;</span>})</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>suicidios_region_menos <span class="op">=</span> suicidios_region_menos.reset_index()</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>suicidios_region_menos <span class="op">=</span> suicidios_region_menos.merge(religions_df, on<span class="op">=</span>[<span class="st">&quot;ParentLocation&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>])</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>suicidios_region_menos <span class="op">=</span> suicidios_region_menos[[<span class="st">&quot;ParentLocation&quot;</span>,<span class="st">&quot;Location&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>,<span class="st">&quot;Religious %&quot;</span>,<span class="st">&quot;Predominant Religion&quot;</span>]]</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>suicidios_region_menos.rename(columns<span class="op">=</span>{<span class="st">&quot;ParentLocation&quot;</span>:<span class="st">&quot;Region&quot;</span>,<span class="st">&quot;Location&quot;</span>:<span class="st">&quot;Country&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>:<span class="st">&quot;Suicides per 100K (min)&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>suicidios_region_menos.sort_values(by<span class="op">=</span><span class="st">&quot;Suicides per 100K (min)&quot;</span>, ascending<span class="op">=</span><span class="va">True</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>suicidios_region_menos</span></code></pre></div>
 <div class="output execute_result" data-execution_count="31">
 <div>
 <style scoped>
@@ -1987,19 +1023,6 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a h
 </div>
 </div>
 </div>
-<div class="cell code" data-execution_count="32">
-<div class="sourceCode" id="cb37"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Graficar suicidios_region_menos y suicidios_region_mas</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">5</span>))</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>)</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Suicides per 100K (max) por region&quot;</span>)</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>sns.barplot(data<span class="op">=</span>suicidios_region_mas, x<span class="op">=</span><span class="st">&quot;Region&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K (max)&quot;</span>, hue<span class="op">=</span><span class="st">&quot;Country&quot;</span>)</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>)</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Suicides per 100K (min) por region&quot;</span>)</span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>sns.barplot(data<span class="op">=</span>suicidios_region_menos, x<span class="op">=</span><span class="st">&quot;Region&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K (min)&quot;</span>, hue<span class="op">=</span><span class="st">&quot;Country&quot;</span>)</span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/e8f9606b81dbd554446bca327da4f379a33378dd.png" /></p>
@@ -2018,26 +1041,6 @@ mostro al principio).</p>
 class="cell markdown">
 <h5>Extremos de la distribucion de datos</h5>
 </section>
-<div class="cell code" data-execution_count="33">
-<div class="sourceCode" id="cb38"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#buscar el pais con mas sucidios por cada religion</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>suicidios_religion_mas <span class="op">=</span> religions_df.groupby(<span class="st">&quot;Predominant Religion&quot;</span>).agg({<span class="st">&quot;Suicides per 100K&quot;</span>:<span class="st">&quot;max&quot;</span>})</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>suicidios_religion_mas <span class="op">=</span> suicidios_religion_mas.reset_index()</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>suicidios_religion_mas <span class="op">=</span> suicidios_religion_mas.merge(religions_df, on<span class="op">=</span>[<span class="st">&quot;Predominant Religion&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>])</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>suicidios_religion_mas <span class="op">=</span> suicidios_religion_mas[[<span class="st">&quot;Predominant Religion&quot;</span>,<span class="st">&quot;Location&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>,<span class="st">&quot;Religious %&quot;</span>]]</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>suicidios_religion_mas.rename(columns<span class="op">=</span>{<span class="st">&quot;Location&quot;</span>:<span class="st">&quot;Country&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>:<span class="st">&quot;Suicides per 100K&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>suicidios_religion_mas.sort_values(by<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="co">#buscar el pais con menos sucidios por cada religion</span></span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>suicidios_religion_menos <span class="op">=</span> religions_df.groupby(<span class="st">&quot;Predominant Religion&quot;</span>).agg({<span class="st">&quot;Suicides per 100K&quot;</span>:<span class="st">&quot;min&quot;</span>})</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>suicidios_religion_menos <span class="op">=</span> suicidios_religion_menos.reset_index()</span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>suicidios_religion_menos <span class="op">=</span> suicidios_religion_menos.merge(religions_df, on<span class="op">=</span>[<span class="st">&quot;Predominant Religion&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>])</span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>suicidios_religion_menos <span class="op">=</span> suicidios_religion_menos[[<span class="st">&quot;Predominant Religion&quot;</span>,<span class="st">&quot;Location&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>,<span class="st">&quot;Religious %&quot;</span>]]</span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>suicidios_religion_menos.rename(columns<span class="op">=</span>{<span class="st">&quot;Location&quot;</span>:<span class="st">&quot;Country&quot;</span>,<span class="st">&quot;Suicides per 100K&quot;</span>:<span class="st">&quot;Suicides per 100K&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>suicidios_religion_menos.sort_values(by<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>, ascending<span class="op">=</span><span class="va">True</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="co">#Agregar rows de suicidios_religion_mas y suicidios_religion_menos a correlacion_religion</span></span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>combined_df <span class="op">=</span> pd.concat([suicidios_religion_mas, suicidios_religion_menos], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>combined_df <span class="op">=</span> combined_df.sort_values(by<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>combined_df</span></code></pre></div>
 <div class="output execute_result" data-execution_count="33">
 <div>
 <style scoped>
@@ -2153,20 +1156,6 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb38-1"><a h
 </div>
 </div>
 </div>
-<div class="cell code" data-execution_count="34">
-<div class="sourceCode" id="cb39"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Graficar correlacion de combined_df (Suicides per 100K y Religious %)</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">5</span>))</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>)</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Suicides per 100K vs Religious %&quot;</span>)</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>combined_df, x<span class="op">=</span><span class="st">&quot;Religious %&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>)</span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Agregamos nombres de los paises</span></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(combined_df)):</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    plt.text(x<span class="op">=</span>combined_df[<span class="st">&quot;Religious %&quot;</span>][i], y<span class="op">=</span>combined_df[<span class="st">&quot;Suicides per 100K&quot;</span>][i], s<span class="op">=</span>combined_df[<span class="st">&quot;Country&quot;</span>][i])</span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Agregamos linea de regresion</span></span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>sns.regplot(data<span class="op">=</span>combined_df, x<span class="op">=</span><span class="st">&quot;Religious %&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>, scatter<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">&quot;red&quot;</span>, label<span class="op">=</span><span class="st">&quot;Regresion lineal&quot;</span>)</span>
-<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>plt.figtext(<span class="fl">0.5</span>, <span class="fl">0.01</span>, <span class="st">&quot;Datos de 2010&quot;</span>, ha<span class="op">=</span><span class="st">&quot;center&quot;</span>, fontsize<span class="op">=</span><span class="dv">12</span>, bbox<span class="op">=</span>{<span class="st">&quot;facecolor&quot;</span>:<span class="st">&quot;orange&quot;</span>, <span class="st">&quot;alpha&quot;</span>:<span class="fl">0.5</span>, <span class="st">&quot;pad&quot;</span>:<span class="dv">5</span>})</span>
-<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/a29665f48e1019e2dd9a2f11b9b70ef1d9d32f95.png" /></p>
@@ -2189,357 +1178,18 @@ que los mas religiosos.</p>
 <section
 id="5-cómo-influye-el-acceso-al-internet-en-la-tasa-de-suicidios-en-diferentes-grupos-demográficos"
 class="cell markdown">
-<h1>5. ¿Cómo influye el acceso al internet en la tasa de suicidios en
-diferentes grupos demográficos?</h1>
+<h2>5. ¿Cómo influye el acceso al internet en la tasa de suicidios en
+diferentes grupos demográficos?</h2>
 </section>
-<div class="cell code" data-execution_count="35">
-<div class="sourceCode" id="cb40"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> rq.get(<span class="st">&#39;https://en.wikipedia.org/wiki/List_of_countries_by_number_of_Internet_users&#39;</span>)</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>soup <span class="op">=</span> bs(response.content)</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> soup.find_all(<span class="st">&#39;table&#39;</span>)[<span class="dv">5</span>]</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(columns <span class="op">=</span> [<span class="st">&#39;País&#39;</span>,<span class="st">&#39;Region&#39;</span>,<span class="st">&#39;Usuarios de internet&#39;</span>,<span class="st">&#39;% Usuarios por pais&#39;</span>])</span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co"># iterar sobre cada fila (&#39;tr&#39;) para completar la información</span></span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> row <span class="kw">in</span> table.find_all(<span class="st">&#39;tr&#39;</span>)[<span class="dv">1</span>::]:</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> row.find_all(<span class="st">&quot;td&quot;</span>)</span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> [col.text.strip() <span class="cf">for</span> col <span class="kw">in</span> cols]</span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>    puesto <span class="op">=</span> cols[<span class="dv">0</span>]</span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    pais <span class="op">=</span> cols[<span class="dv">1</span>]</span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>    usuarios <span class="op">=</span> cols[<span class="dv">3</span>]</span>
-<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>    porcentajes <span class="op">=</span> cols[<span class="dv">4</span>]</span>
-<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>    new_row <span class="op">=</span> pd.DataFrame({<span class="st">&#39;País&#39;</span>: puesto, <span class="st">&#39;Region&#39;</span>: pais, <span class="st">&#39;Usuarios de internet&#39;</span>: usuarios,<span class="st">&#39;% Usuarios por pais&#39;</span>:porcentajes}, index<span class="op">=</span>[<span class="st">&#39;country&#39;</span>])</span>
-<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.concat([df, new_row], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>usur_por_pais<span class="op">=</span>df</span>
-<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="co">#ahora para ayudar a una mejor comparacion buscaremos agrregar una columna que nos de el porcentaje de suicidios por pais para esto extraeremos datos de internet para hallar el numero de ciudadanos por pais en el año 2021 año en el que no estamos moviendo</span></span>
-<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> rq.get(<span class="st">&#39;https://www.worldometers.info/world-population/population-by-country/&#39;</span>)</span>
-<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>soup <span class="op">=</span> bs(response.content)</span>
-<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> soup.find_all(<span class="st">&#39;table&#39;</span>)[<span class="dv">0</span>]</span>
-<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(columns <span class="op">=</span> [<span class="st">&#39;País&#39;</span>,<span class="st">&#39;Nro Habitantes&#39;</span>])</span>
-<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a><span class="co"># iterar sobre cada fila (&#39;tr&#39;) para completar la información</span></span>
-<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> row <span class="kw">in</span> table.find_all(<span class="st">&#39;tr&#39;</span>)[<span class="dv">1</span>::]:</span>
-<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> row.find_all(<span class="st">&quot;td&quot;</span>)</span>
-<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> [col.text.strip() <span class="cf">for</span> col <span class="kw">in</span> cols]</span>
-<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a>    Países <span class="op">=</span> cols[<span class="dv">1</span>]</span>
-<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>    Población <span class="op">=</span> cols[<span class="dv">2</span>]</span>
-<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>    new_row <span class="op">=</span> pd.DataFrame({<span class="st">&#39;País&#39;</span>: Países, <span class="st">&#39;Nro Habitantes&#39;</span>:Población }, index<span class="op">=</span>[<span class="st">&#39;country&#39;</span>])</span>
-<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.concat([df, new_row], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a><span class="co">#volvemos &quot;Nro Habitantes&quot; tipo entero</span></span>
-<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a><span class="co">#df[&#39;Nro Habitantes&#39;] = df[&#39;Nro Habitantes&#39;].str.replace(&#39;.&#39;, &#39;&#39;).astype(int)</span></span>
-<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;Nro Habitantes&#39;</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">&#39;Nro Habitantes&#39;</span>].<span class="bu">str</span>.replace(<span class="st">&#39;,&#39;</span>, <span class="st">&#39;&#39;</span>), errors<span class="op">=</span><span class="st">&#39;coerce&#39;</span>)</span>
-<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a><span class="co">#pasamos los datos de usur_por_pais a tipo numerico </span></span>
-<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a>usur_por_pais[<span class="st">&#39;Usuarios de internet&#39;</span>] <span class="op">=</span> usur_por_pais[<span class="st">&#39;Usuarios de internet&#39;</span>].replace(<span class="st">&#39;,&#39;</span>, <span class="st">&#39;&#39;</span>, regex<span class="op">=</span><span class="va">True</span>).astype(<span class="bu">int</span>)</span>
-<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a>usur_por_pais[<span class="st">&#39;% Usuarios por pais&#39;</span>] <span class="op">=</span> usur_por_pais[<span class="st">&#39;% Usuarios por pais&#39;</span>].<span class="bu">str</span>.rstrip(<span class="st">&#39;%&#39;</span>).astype(<span class="bu">float</span>)</span>
-<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a>usur_por_pais<span class="op">=</span> usur_por_pais.merge(df,on<span class="op">=</span><span class="st">&quot;País&quot;</span>)</span>
-<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a>usur_por_pais <span class="op">=</span> usur_por_pais.sort_values(by<span class="op">=</span><span class="st">&#39;Nro Habitantes&#39;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a>usur_por_pais</span></code></pre></div>
-<div class="output execute_result" data-execution_count="35">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>País</th>
-      <th>Region</th>
-      <th>Usuarios de internet</th>
-      <th>% Usuarios por pais</th>
-      <th>Nro Habitantes</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1</th>
-      <td>India</td>
-      <td>Southern Asia</td>
-      <td>881250000</td>
-      <td>62.6</td>
-      <td>1428627663</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>China</td>
-      <td>Eastern Asia</td>
-      <td>1089140000</td>
-      <td>76.4</td>
-      <td>1425671352</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>United States</td>
-      <td>Northern America</td>
-      <td>311300000</td>
-      <td>92.4</td>
-      <td>339996563</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Indonesia</td>
-      <td>South-eastern Asia</td>
-      <td>215626156</td>
-      <td>78.8</td>
-      <td>277534122</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>Pakistan</td>
-      <td>Southern Asia</td>
-      <td>130000000</td>
-      <td>60.8</td>
-      <td>240485658</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>194</th>
-      <td>Nauru</td>
-      <td>Micronesia</td>
-      <td>6475</td>
-      <td>51.8</td>
-      <td>12780</td>
-    </tr>
-    <tr>
-      <th>195</th>
-      <td>Tuvalu</td>
-      <td>Polynesia</td>
-      <td>5520</td>
-      <td>49.3</td>
-      <td>11396</td>
-    </tr>
-    <tr>
-      <th>197</th>
-      <td>Montserrat</td>
-      <td>Caribbean</td>
-      <td>2833</td>
-      <td>64.1</td>
-      <td>4386</td>
-    </tr>
-    <tr>
-      <th>196</th>
-      <td>Falkland Islands</td>
-      <td>South America</td>
-      <td>2881</td>
-      <td>76.5</td>
-      <td>3791</td>
-    </tr>
-    <tr>
-      <th>198</th>
-      <td>Niue</td>
-      <td>Polynesia</td>
-      <td>1034</td>
-      <td>53.4</td>
-      <td>1935</td>
-    </tr>
-  </tbody>
-</table>
-<p>199 rows × 5 columns</p>
 </div>
 </div>
-</div>
-<div class="cell code" data-execution_count="36">
-<div class="sourceCode" id="cb41"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>suicidios_pais<span class="op">=</span>df_suicidio_oms_clean[df_suicidio_oms_clean[<span class="st">&#39;Dim1&#39;</span>]<span class="op">==</span><span class="st">&#39;Both sexes&#39;</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>).drop(columns<span class="op">=</span>[<span class="st">&#39;CodigoPais&#39;</span>,<span class="st">&#39;ParentLocation&#39;</span>,<span class="st">&#39;Dim1&#39;</span>,<span class="st">&#39;Period&#39;</span>],axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>suicidios_pais<span class="op">=</span>suicidios_pais.groupby(<span class="st">&#39;Location&#39;</span>).mean().reset_index()</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>suicidios_pais<span class="op">=</span>suicidios_pais.rename(columns<span class="op">=</span>{<span class="st">&#39;Location&#39;</span>:<span class="st">&#39;País&#39;</span>,<span class="st">&#39;FactValueNumeric&#39;</span>:<span class="st">&#39;Suicidios&#39;</span>}) </span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>suicidios_pais<span class="op">=</span>suicidios_pais.merge(usur_por_pais,on<span class="op">=</span><span class="st">&#39;País&#39;</span>)</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co">#ahora creamos una nueva columna para el porcentaje de suicidios por pais</span></span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>suicidios_pais[<span class="st">&#39;% Suicidios por Nro. Habs.&#39;</span>] <span class="op">=</span>(suicidios_pais[<span class="st">&#39;Suicidios&#39;</span>] <span class="op">/</span> suicidios_pais[<span class="st">&#39;Nro Habitantes&#39;</span>]) <span class="op">*</span> <span class="dv">100</span> </span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="co">#suicidios_pais.drop([&#39;Suicidios&#39;, &#39;Nro Habitantes&#39;], axis=1, inplace=True)</span></span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>suicidios_pais<span class="co">#[suicidios_pais[&#39;País&#39;]==&#39;China&#39;]</span></span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>suicidios_pais <span class="op">=</span> suicidios_pais.sort_values(by<span class="op">=</span><span class="st">&#39;Suicidios&#39;</span>, ascending<span class="op">=</span><span class="va">False</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>suicidios_pais</span></code></pre></div>
-<div class="output execute_result" data-execution_count="36">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>País</th>
-      <th>Suicidios</th>
-      <th>Region</th>
-      <th>Usuarios de internet</th>
-      <th>% Usuarios por pais</th>
-      <th>Nro Habitantes</th>
-      <th>% Suicidios por Nro. Habs.</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Lesotho</td>
-      <td>59.5735</td>
-      <td>Southern Africa</td>
-      <td>665312</td>
-      <td>29.2</td>
-      <td>2330318</td>
-      <td>0.002556</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Eswatini</td>
-      <td>41.0140</td>
-      <td>Southern Africa</td>
-      <td>414278</td>
-      <td>34.7</td>
-      <td>1210822</td>
-      <td>0.003387</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Lithuania</td>
-      <td>37.9765</td>
-      <td>Northern Europe</td>
-      <td>2243448</td>
-      <td>80.5</td>
-      <td>2718352</td>
-      <td>0.001397</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Guyana</td>
-      <td>34.5695</td>
-      <td>South America</td>
-      <td>290375</td>
-      <td>36.1</td>
-      <td>813834</td>
-      <td>0.004248</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Belarus</td>
-      <td>34.0420</td>
-      <td>Eastern Europe</td>
-      <td>7048231</td>
-      <td>73.6</td>
-      <td>9498238</td>
-      <td>0.000358</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>155</th>
-      <td>Jamaica</td>
-      <td>1.9970</td>
-      <td>Caribbean</td>
-      <td>1409888</td>
-      <td>49.9</td>
-      <td>2825544</td>
-      <td>0.000071</td>
-    </tr>
-    <tr>
-      <th>156</th>
-      <td>Jordan</td>
-      <td>1.7900</td>
-      <td>Western Asia</td>
-      <td>6480202</td>
-      <td>58.1</td>
-      <td>11337052</td>
-      <td>0.000016</td>
-    </tr>
-    <tr>
-      <th>157</th>
-      <td>Grenada</td>
-      <td>1.7610</td>
-      <td>Caribbean</td>
-      <td>63692</td>
-      <td>51.1</td>
-      <td>126183</td>
-      <td>0.001396</td>
-    </tr>
-    <tr>
-      <th>158</th>
-      <td>Barbados</td>
-      <td>1.1360</td>
-      <td>Caribbean</td>
-      <td>233604</td>
-      <td>83.1</td>
-      <td>281995</td>
-      <td>0.000403</td>
-    </tr>
-    <tr>
-      <th>159</th>
-      <td>Antigua and Barbuda</td>
-      <td>0.6490</td>
-      <td>Caribbean</td>
-      <td>77529</td>
-      <td>83.2</td>
-      <td>94298</td>
-      <td>0.000688</td>
-    </tr>
-  </tbody>
-</table>
-<p>160 rows × 7 columns</p>
-</div>
-</div>
-</div>
-<div class="cell code" data-execution_count="37">
-<div class="sourceCode" id="cb42"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Graficamos los Datos</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(y<span class="op">=</span><span class="st">&#39;% Usuarios por pais&#39;</span>, x<span class="op">=</span><span class="st">&#39;Suicidios&#39;</span>, data<span class="op">=</span>suicidios_pais)</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>sns.regplot(y<span class="op">=</span><span class="st">&#39;% Usuarios por pais&#39;</span>, x<span class="op">=</span><span class="st">&#39;Suicidios&#39;</span>, data<span class="op">=</span>suicidios_pais)</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;% Usuarios por pais vs suicidos por 100k&#39;</span>)</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/6ba989f32b6e7604eed0f636ae89528773cacd54.png" /></p>
 </div>
 </div>
-<div class="cell code" data-execution_count="38">
-<div class="sourceCode" id="cb43"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Calculamos la correlacion genral entre Usuarios de internet y Suicidios</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>datos_de_interes <span class="op">=</span> suicidios_pais[[<span class="st">&#39;% Usuarios por pais&#39;</span>,<span class="st">&#39;Suicidios&#39;</span>]]</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>correlacion <span class="op">=</span> datos_de_interes.corr().iloc[<span class="dv">0</span>:<span class="dv">1</span>]</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&#39;Correlacion por pearson de Usuarios de internet y Suicidios </span><span class="sc">{</span>correlacion<span class="sc">}</span><span class="ss">&#39;</span>)</span></code></pre></div>
 <div class="output stream stdout">
-<pre><code>Correlacion por pearson de Usuarios de internet y Suicidios                      % Usuarios por pais  Suicidios
+<pre><code>Correlacion por persona de Usuarios de internet y Suicidios                      % Usuarios por pais  Suicidios
 % Usuarios por pais                  1.0   0.093839
 </code></pre>
 </div>
@@ -2554,72 +1204,11 @@ Usuarios por pais y los suicidios por numero de habitantes.</p>
 <p>Ahora si nos fijamos especifiamente en una reguion en espeifica como
 EEUU en el año 2021 a partir de estos datos podremos ver:</p>
 </div>
-<div class="cell code" data-execution_count="39">
-<div class="sourceCode" id="cb45"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">#datos de acceso a internet</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>internet_acess <span class="op">=</span> pd.read_excel(<span class="st">&#39;Datos/data/statistic_id184691_internet-access-in-the-united-states-november-2021-by-state.xlsx&#39;</span>,skiprows<span class="op">=</span> <span class="dv">4</span>, sheet_name<span class="op">=</span><span class="st">&#39;Data&#39;</span> )</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>internet_acess <span class="op">=</span> internet_acess.rename(columns<span class="op">=</span>{<span class="st">&#39;Unnamed: 1&#39;</span>:<span class="st">&#39;STATE&#39;</span>,<span class="st">&#39;Unnamed: 2&#39;</span>:<span class="st">&#39;% INTERNET ACCESS&#39;</span>})[[<span class="st">&#39;STATE&#39;</span>,<span class="st">&#39;% INTERNET ACCESS&#39;</span>]]</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co">#datos de suicidios por estado</span></span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>suicides_per_state <span class="op">=</span> pd.read_csv(<span class="st">&#39;Datos/data/data-table.csv&#39;</span>)</span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>suicides_per_state <span class="op">=</span> suicides_per_state[suicides_per_state[<span class="st">&#39;YEAR&#39;</span>]<span class="op">==</span><span class="dv">2019</span>].reset_index(drop<span class="op">=</span> <span class="va">True</span>)[[<span class="st">&#39;STATE&#39;</span>,<span class="st">&#39;RATE&#39;</span>,<span class="st">&#39;DEATHS&#39;</span>]]</span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="co">#convertimos los el codigo de estado al estado correspondiente</span></span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>estados <span class="op">=</span> {</span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;AL&#39;</span>: <span class="st">&#39;Alabama&#39;</span>, <span class="st">&#39;AK&#39;</span>: <span class="st">&#39;Alaska&#39;</span>, <span class="st">&#39;AZ&#39;</span>: <span class="st">&#39;Arizona&#39;</span>, <span class="st">&#39;AR&#39;</span>: <span class="st">&#39;Arkansas&#39;</span>, <span class="st">&#39;CA&#39;</span>: <span class="st">&#39;California&#39;</span>,</span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;CO&#39;</span>: <span class="st">&#39;Colorado&#39;</span>, <span class="st">&#39;CT&#39;</span>: <span class="st">&#39;Connecticut&#39;</span>, <span class="st">&#39;DE&#39;</span>: <span class="st">&#39;Delaware&#39;</span>, <span class="st">&#39;FL&#39;</span>: <span class="st">&#39;Florida&#39;</span>, <span class="st">&#39;GA&#39;</span>: <span class="st">&#39;Georgia&#39;</span>,</span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;HI&#39;</span>: <span class="st">&#39;Hawaii&#39;</span>, <span class="st">&#39;ID&#39;</span>: <span class="st">&#39;Idaho&#39;</span>, <span class="st">&#39;IL&#39;</span>: <span class="st">&#39;Illinois&#39;</span>, <span class="st">&#39;IN&#39;</span>: <span class="st">&#39;Indiana&#39;</span>, <span class="st">&#39;IA&#39;</span>: <span class="st">&#39;Iowa&#39;</span>, <span class="st">&#39;KS&#39;</span>: <span class="st">&#39;Kansas&#39;</span>,</span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;KY&#39;</span>: <span class="st">&#39;Kentucky&#39;</span>, <span class="st">&#39;LA&#39;</span>: <span class="st">&#39;Louisiana&#39;</span>, <span class="st">&#39;ME&#39;</span>: <span class="st">&#39;Maine&#39;</span>, <span class="st">&#39;MD&#39;</span>: <span class="st">&#39;Maryland&#39;</span>, <span class="st">&#39;MA&#39;</span>: <span class="st">&#39;Massachusetts&#39;</span>,</span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;MI&#39;</span>: <span class="st">&#39;Michigan&#39;</span>, <span class="st">&#39;MN&#39;</span>: <span class="st">&#39;Minnesota&#39;</span>, <span class="st">&#39;MS&#39;</span>: <span class="st">&#39;Mississippi&#39;</span>, <span class="st">&#39;MO&#39;</span>: <span class="st">&#39;Missouri&#39;</span>, <span class="st">&#39;MT&#39;</span>: <span class="st">&#39;Montana&#39;</span>,</span>
-<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;NE&#39;</span>: <span class="st">&#39;Nebraska&#39;</span>, <span class="st">&#39;NV&#39;</span>: <span class="st">&#39;Nevada&#39;</span>, <span class="st">&#39;NH&#39;</span>: <span class="st">&#39;New Hampshire&#39;</span>, <span class="st">&#39;NJ&#39;</span>: <span class="st">&#39;New Jersey&#39;</span>, <span class="st">&#39;NM&#39;</span>: <span class="st">&#39;New Mexico&#39;</span>,</span>
-<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;NY&#39;</span>: <span class="st">&#39;New York&#39;</span>, <span class="st">&#39;NC&#39;</span>: <span class="st">&#39;North Carolina&#39;</span>, <span class="st">&#39;ND&#39;</span>: <span class="st">&#39;North Dakota&#39;</span>, <span class="st">&#39;OH&#39;</span>: <span class="st">&#39;Ohio&#39;</span>, <span class="st">&#39;OK&#39;</span>: <span class="st">&#39;Oklahoma&#39;</span>,</span>
-<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;OR&#39;</span>: <span class="st">&#39;Oregon&#39;</span>, <span class="st">&#39;PA&#39;</span>: <span class="st">&#39;Pennsylvania&#39;</span>, <span class="st">&#39;RI&#39;</span>: <span class="st">&#39;Rhode Island&#39;</span>, <span class="st">&#39;SC&#39;</span>: <span class="st">&#39;South Carolina&#39;</span>, <span class="st">&#39;SD&#39;</span>: <span class="st">&#39;South Dakota&#39;</span>,</span>
-<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;TN&#39;</span>: <span class="st">&#39;Tennessee&#39;</span>, <span class="st">&#39;TX&#39;</span>: <span class="st">&#39;Texas&#39;</span>, <span class="st">&#39;UT&#39;</span>: <span class="st">&#39;Utah&#39;</span>, <span class="st">&#39;VT&#39;</span>: <span class="st">&#39;Vermont&#39;</span>, <span class="st">&#39;VA&#39;</span>: <span class="st">&#39;Virginia&#39;</span>, <span class="st">&#39;WA&#39;</span>: <span class="st">&#39;Washington&#39;</span>,</span>
-<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;WV&#39;</span>: <span class="st">&#39;West Virginia&#39;</span>, <span class="st">&#39;WI&#39;</span>: <span class="st">&#39;Wisconsin&#39;</span>, <span class="st">&#39;WY&#39;</span>: <span class="st">&#39;Wyoming&#39;</span></span>
-<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>suicides_per_state[<span class="st">&#39;STATE&#39;</span>] <span class="op">=</span> suicides_per_state[<span class="st">&#39;STATE&#39;</span>].<span class="bu">map</span>(estados)</span>
-<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a><span class="co">#Datos unifiados</span></span>
-<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>Data <span class="op">=</span> suicides_per_state.merge(internet_acess,on<span class="op">=</span><span class="st">&#39;STATE&#39;</span>)</span>
-<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a><span class="co">#Data.dtypes</span></span>
-<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a><span class="co">#Pasamos los datos a tipo numerico</span></span>
-<span id="cb45-30"><a href="#cb45-30" aria-hidden="true" tabindex="-1"></a>Data[<span class="st">&#39;DEATHS&#39;</span>]<span class="op">=</span>Data[<span class="st">&#39;DEATHS&#39;</span>].astype(<span class="bu">float</span>)</span>
-<span id="cb45-31"><a href="#cb45-31" aria-hidden="true" tabindex="-1"></a>Data.dtypes</span></code></pre></div>
-<div class="output execute_result" data-execution_count="39">
-<pre><code>STATE                 object
-RATE                 float64
-DEATHS               float64
-% INTERNET ACCESS    float64
-dtype: object</code></pre>
-</div>
-</div>
-<div class="cell code" data-execution_count="40">
-<div class="sourceCode" id="cb47"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span><span class="st">&#39;STATE&#39;</span>, y<span class="op">=</span><span class="st">&#39;RATE&#39;</span>, data<span class="op">=</span>Data)</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>media_rate <span class="op">=</span> np.mean(Data[<span class="st">&#39;RATE&#39;</span>])</span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>plt.axhline(y<span class="op">=</span>media_rate, color<span class="op">=</span><span class="st">&#39;red&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="ss">f&#39;Media: </span><span class="sc">{</span>media_rate<span class="sc">:.2f}</span><span class="ss">&#39;</span>)</span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;STATE vs RATE OF SUICIDES&#39;</span>)</span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;STATE&#39;</span>)</span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;RATE&#39;</span>)</span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/5a41fae675f79bbdc50706ef745e2b7f79d1b0d1.png" /></p>
 </div>
 </div>
-<div class="cell code" data-execution_count="41">
-<div class="sourceCode" id="cb48"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico STATE vs % INTERNET ACCESS</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span><span class="st">&#39;STATE&#39;</span>, y<span class="op">=</span><span class="st">&#39;% INTERNET ACCESS&#39;</span>, data<span class="op">=</span>Data)</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;STATE vs % INTERNET ACCESS&#39;</span>)</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/4020a830f0cb8b7d12764430adf5aff50c1117ea.png" /></p>
@@ -2630,21 +1219,6 @@ src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/4020a830f0cb8b7d12764430adf5aff50
 <p>Ahora busquemos una correlacion entre los suicidios por habitantes y
 el % acceso a internet en los datos de EEUU.</p>
 </section>
-<div class="cell code" data-execution_count="42">
-<div class="sourceCode" id="cb49"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(x<span class="op">=</span><span class="st">&#39;% INTERNET ACCESS&#39;</span>, y<span class="op">=</span><span class="st">&#39;RATE&#39;</span>, data<span class="op">=</span>Data)</span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>sns.regplot(x<span class="op">=</span><span class="st">&#39;% INTERNET ACCESS&#39;</span>, y<span class="op">=</span><span class="st">&#39;RATE&#39;</span>, data<span class="op">=</span>Data)</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;% INTERNET ACCESS vs SUICIDIOS POR HABS.&#39;</span>)</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;% INTERNET ACCESS&#39;</span>)</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;SUICIDIOS POR HABS.&#39;</span>)</span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>plt.show() </span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>correlacion <span class="op">=</span> Data[<span class="st">&#39;% INTERNET ACCESS&#39;</span>].corr(Data[<span class="st">&#39;RATE&#39;</span>])</span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Correlación entre &#39;% INTERNET ACCESS&#39; y &#39;RATE&#39; es: </span><span class="sc">{</span>correlacion<span class="sc">}</span><span class="ss">&quot;</span>)</span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>correlacion <span class="op">=</span> Data[<span class="st">&#39;% INTERNET ACCESS&#39;</span>].corr(Data[<span class="st">&#39;DEATHS&#39;</span>])</span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;La correlación entre &#39;% INTERNET ACCESS&#39; y &#39;DEATHS&#39; es: </span><span class="sc">{</span>correlacion<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/81c69fbb1d06f32530da42834a8c66b1e1017634.png" /></p>
@@ -2656,7 +1230,7 @@ La correlación entre &#39;% INTERNET ACCESS&#39; y &#39;DEATHS&#39; es: -0.2762
 </div>
 </div>
 <div class="cell markdown">
-<p>Como se pyede ver en EEUU la correlacion entre los Suicidios por Tot.
+<p>Como se puede ver en EEUU la correlacion entre los Suicidios por Tot.
 habitantes y por Suicidios tienen muy poca correlacion en ambos casos,
 por lo que no se puede notar una influencia clara entre el % aceso a
 internet y los suicidios por habs.</p>
@@ -2664,142 +1238,15 @@ internet y los suicidios por habs.</p>
 <section
 id="6-se-relaciona-la-tasa-de-suicidios-con-la-esperanza-de-vida-de-los-países"
 class="cell markdown">
-<h1>6. ¿Se relaciona la tasa de suicidios con la esperanza de vida de
-los países?</h1>
+<h2>6. ¿Se relaciona la tasa de suicidios con la esperanza de vida de
+los países?</h2>
 </section>
-<div class="cell code" data-execution_count="43">
-<div class="sourceCode" id="cb51"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>life_expectancy <span class="op">=</span> pd.read_csv(<span class="st">&#39;Datos/data/life_exp.csv&#39;</span>)</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Dejar solo la columna de 2019</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>life_expectancy <span class="op">=</span> life_expectancy[[<span class="st">&quot;Country Name&quot;</span>,<span class="st">&quot;2019&quot;</span>]]</span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Renombrar columnas</span></span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>life_expectancy.rename(columns<span class="op">=</span>{<span class="st">&quot;Country Name&quot;</span>:<span class="st">&quot;Location&quot;</span>,<span class="st">&quot;2019&quot;</span>:<span class="st">&quot;Life expectancy&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>merged_df <span class="op">=</span> pd.merge(suicidios2019, life_expectancy, on<span class="op">=</span><span class="st">&quot;Location&quot;</span>)</span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>merged_df <span class="op">=</span> merged_df[[<span class="st">&quot;Location&quot;</span>,<span class="st">&quot;Life expectancy&quot;</span>,<span class="st">&quot;FactValueNumeric&quot;</span>]]</span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>merged_df.rename(columns<span class="op">=</span>{<span class="st">&quot;FactValueNumeric&quot;</span>:<span class="st">&quot;Suicides per 100K&quot;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>merged_df[<span class="st">&quot;Life expectancy&quot;</span>] <span class="op">=</span> pd.to_numeric(merged_df[<span class="st">&quot;Life expectancy&quot;</span>], errors<span class="op">=</span><span class="st">&#39;coerce&#39;</span>)</span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>merged_df[<span class="st">&quot;Suicides per 100K&quot;</span>] <span class="op">=</span> pd.to_numeric(merged_df[<span class="st">&quot;Suicides per 100K&quot;</span>], errors<span class="op">=</span><span class="st">&#39;coerce&#39;</span>)</span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>merged_df.dropna(inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>merged_df</span></code></pre></div>
-<div class="output execute_result" data-execution_count="43">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Location</th>
-      <th>Life expectancy</th>
-      <th>Suicides per 100K</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Angola</td>
-      <td>62.448</td>
-      <td>6.08</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Burundi</td>
-      <td>62.351</td>
-      <td>6.24</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Benin</td>
-      <td>60.454</td>
-      <td>7.81</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Burkina Faso</td>
-      <td>60.039</td>
-      <td>7.48</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Botswana</td>
-      <td>65.464</td>
-      <td>16.05</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>154</th>
-      <td>Solomon Islands</td>
-      <td>70.382</td>
-      <td>14.67</td>
-    </tr>
-    <tr>
-      <th>155</th>
-      <td>Tonga</td>
-      <td>70.871</td>
-      <td>3.82</td>
-    </tr>
-    <tr>
-      <th>156</th>
-      <td>Viet Nam</td>
-      <td>74.093</td>
-      <td>7.51</td>
-    </tr>
-    <tr>
-      <th>157</th>
-      <td>Vanuatu</td>
-      <td>69.877</td>
-      <td>18.03</td>
-    </tr>
-    <tr>
-      <th>158</th>
-      <td>Samoa</td>
-      <td>72.157</td>
-      <td>12.55</td>
-    </tr>
-  </tbody>
-</table>
-<p>159 rows × 3 columns</p>
 </div>
-</div>
-</div>
-<div class="cell code" data-execution_count="44">
-<div class="sourceCode" id="cb52"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">5</span>))</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>)</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Suicides per 100K vs Life expectancy&quot;</span>)</span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>merged_df, x<span class="op">=</span><span class="st">&quot;Life expectancy&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>)</span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>sns.regplot(data<span class="op">=</span>merged_df, x<span class="op">=</span><span class="st">&quot;Life expectancy&quot;</span>, y<span class="op">=</span><span class="st">&quot;Suicides per 100K&quot;</span>, scatter<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">&quot;red&quot;</span>, label<span class="op">=</span><span class="st">&quot;Regresion lineal&quot;</span>)</span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>plt.figtext(<span class="fl">0.5</span>, <span class="fl">0.01</span>, <span class="st">&quot;Datos de 2019&quot;</span>, ha<span class="op">=</span><span class="st">&quot;center&quot;</span>, fontsize<span class="op">=</span><span class="dv">12</span>, bbox<span class="op">=</span>{<span class="st">&quot;facecolor&quot;</span>:<span class="st">&quot;orange&quot;</span>, <span class="st">&quot;alpha&quot;</span>:<span class="fl">0.5</span>, <span class="st">&quot;pad&quot;</span>:<span class="dv">5</span>})</span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/24a1cf9473ab776148315eed8dc20d08cdbf2158.png" /></p>
 </div>
 </div>
-<div class="cell code" data-execution_count="45">
-<div class="sourceCode" id="cb53"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>correlation_df <span class="op">=</span> merged_df[[<span class="st">&#39;Life expectancy&#39;</span>, <span class="st">&#39;Suicides per 100K&#39;</span>]]</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>correlation_matrix <span class="op">=</span> correlation_df.corr()</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>sns.heatmap(correlation_matrix, annot<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Correlacion entre life expectancy y suicides per 100k&quot;</span>)</span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <div class="output display_data">
 <p><img
 src="vertopal_c9e7e9a0a1ce4024b7b039b32d7fbe5c/4c269484419da7414e222d0ac1a2f527cc10f6ba.png" /></p>
